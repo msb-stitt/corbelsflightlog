@@ -28,8 +28,9 @@ The hub's **Download Logs** button, on its Manage page, fetches the SDK's
 
 `FtcFlightLog.openLive(this)` opens a log as `open` does and also sends every
 value it records to AdvantageScope as it is recorded, over NetworkTables 4. In
-AdvantageScope, choose **File > Connect to Robot**, with the robot address set
-to `192.168.43.1`; the values appear under the same names as in the file.
+AdvantageScope, set **Robot Address** to `192.168.43.1` under **AdvantageScope >
+Settings…**, then choose **File > Connect to Robot > NetworkTables 4**; the
+values appear under the same names as in the file.
 
 The server is `Nt4Server`, in `corbelsflightlog-core`: plain Java with no
 libraries, on port 5810. It starts on the first `openLive` and runs until the
