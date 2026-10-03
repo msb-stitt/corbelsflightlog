@@ -6,6 +6,13 @@ the release workflow refuses a tag that doesn't.
 
 ## Unreleased
 
+- `corbelsflightlog-core`: `Nt4Server`, a NetworkTables 4 server in plain Java with
+  no libraries, and `FlightLog.mirrorTo(server)`, which sends every recorded value
+  to it live.
+- `corbelsflightlog-ftc`: `FtcFlightLog.openLive(opMode)`, which opens a log and
+  serves it live to AdvantageScope on port 5810. For practice: FTC rule R704
+  forbids it at competitions.
+
 ## 0.1.0
 
 First release, split out of the Corbels robot code.

@@ -13,6 +13,9 @@ Values are written **only when they change**, so a boolean that holds all match
 costs one record rather than thousands, and a file survives the match for
 review afterwards -- unlike a dashboard, which samples and forgets.
 
+For practice, `FtcFlightLog.openLive(this)` also sends the same values live to
+AdvantageScope over NetworkTables 4; see [Viewing a log](docs/viewing.md).
+
 | Module | Depends on | For |
 |---|---|---|
 | `corbelsflightlog-core` | nothing | The WPILOG writer and logger |

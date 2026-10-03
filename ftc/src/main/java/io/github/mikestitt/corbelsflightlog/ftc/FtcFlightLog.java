@@ -9,11 +9,13 @@ import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.WebHandlerManager;
 
 import io.github.mikestitt.corbelsflightlog.FlightLog;
+import io.github.mikestitt.corbelsflightlog.nt.Nt4Server;
 
 import org.firstinspires.ftc.ftccommon.external.WebHandlerRegistrar;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * FlightLog for an FTC robot: files land in the Robot Controller's own storage,
@@ -127,6 +129,27 @@ public final class FtcFlightLog implements OpModeManagerNotifier.Notifications {
     /** Opens a log named after the OpMode's class. Never throws. */
     public static FlightLog open(OpMode opMode) {
         return open(opMode == null ? "OpMode" : opMode.getClass().getSimpleName());
+    }
+
+    /**
+     * Opens a log as {@link #open(OpMode)} does, and sends every value it
+     * records live to AdvantageScope as well, over NetworkTables 4 at
+     * {@code 192.168.43.1:5810}. The server starts on the first call and runs
+     * until the Robot Controller app stops.
+     *
+     * <p>For practice only. FTC rule R704 forbids third-party telemetry over
+     * Wi-Fi at competitions, so a competition OpMode calls {@link #open}.
+     * If the server cannot start, the log still records and the reason goes
+     * to the robot's log.
+     */
+    public static FlightLog openLive(OpMode opMode) {
+        FlightLog log = open(opMode);
+        try {
+            log.mirrorTo(Nt4Server.shared());
+        } catch (IOException | RuntimeException e) {
+            RobotLog.ee("corbelsflightlog", e, "could not start the NetworkTables server");
+        }
+        return log;
     }
 
     /** Opens a log with the given run name, in {@link #logDirectory()}. */

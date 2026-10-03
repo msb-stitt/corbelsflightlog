@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -14,6 +15,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.LongSupplier;
+
+import io.github.mikestitt.corbelsflightlog.nt.Nt4Server;
 
 /**
  * One WPILOG file per OpMode run, for AdvantageScope.
@@ -135,6 +138,7 @@ public final class FlightLog {
     private final Set<String> typeWarnings = new HashSet<>();
     private final byte[] poseBuffer = new byte[POSE_BYTES];
     private final byte[] structBuffer = new byte[56];
+    private Nt4Server live;          // null unless mirrored
 
     private FlightLog(WpiLogWriter writer, File file, String problem) {
         this.writer = writer;
@@ -189,6 +193,22 @@ public final class FlightLog {
         return writer != null ? file.getName() : "off (" + problem + ")";
     }
 
+    /**
+     * Sends every value this log records to {@code server} as well, under the
+     * same name and type, so AdvantageScope shows live what the file holds
+     * afterwards. Sends the struct schemas at once. Only values recorded from
+     * now on are sent, and nothing is sent once the log stops recording.
+     * {@code null} stops mirroring.
+     */
+    public void mirrorTo(Nt4Server server) {
+        live = server;
+        if (server == null) return;
+        for (String[] schema : SCHEMAS) {
+            server.set("/.schema/struct:" + schema[0], "structschema",
+                    schema[1].getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
     // ------------------------------------------------------------ scalars
 
     /** A {@code double}. NaN and infinities are skipped (a gap in the graph). */
@@ -199,6 +219,7 @@ public final class FlightLog {
             Channel ch = channel(key, "double");
             if (ch == null || (ch.written && ch.bits == bits)) return;
             writer.appendDouble(ch.id, value + 0.0, now());
+            mirror(key, "double", value + 0.0);
             remember(ch, bits);
         } catch (IOException e) {
             fail(e);
@@ -217,6 +238,7 @@ public final class FlightLog {
             Channel ch = channel(key, "float");
             if (ch == null || (ch.written && ch.bits == bits)) return;
             writer.appendFloat(ch.id, value + 0.0f, now());
+            mirror(key, "float", value + 0.0f);
             remember(ch, bits);
         } catch (IOException e) {
             fail(e);
@@ -230,6 +252,7 @@ public final class FlightLog {
             Channel ch = channel(key, "int64");
             if (ch == null || (ch.written && ch.bits == value)) return;
             writer.appendInt64(ch.id, value, now());
+            mirror(key, "int", value);
             remember(ch, value);
         } catch (IOException e) {
             fail(e);
@@ -244,6 +267,7 @@ public final class FlightLog {
             Channel ch = channel(key, "boolean");
             if (ch == null || (ch.written && ch.bits == bits)) return;
             writer.appendBoolean(ch.id, value, now());
+            mirror(key, "boolean", value);
             remember(ch, bits);
         } catch (IOException e) {
             fail(e);
@@ -258,6 +282,7 @@ public final class FlightLog {
             Channel ch = channel(key, "string");
             if (ch == null || (ch.written && v.equals(ch.last))) return;
             writer.appendString(ch.id, v, now());
+            mirror(key, "string", v);
             ch.last = v;
             ch.written = true;
         } catch (IOException e) {
@@ -276,6 +301,7 @@ public final class FlightLog {
             if (ch.written && same(ch.x, xIn) && same(ch.y, yIn) && same(ch.h, headingRad)) return;
             encodePose(poseBuffer, 0, xIn, yIn, headingRad);
             writer.appendRaw(ch.id, poseBuffer, POSE_BYTES, now());
+            mirror(key, "struct:Pose2d", Arrays.copyOf(poseBuffer, POSE_BYTES));
             ch.x = xIn;
             ch.y = yIn;
             ch.h = headingRad;
@@ -327,6 +353,7 @@ public final class FlightLog {
                 encodePose(buf, POSE_BYTES * i, xyh[3 * i], xyh[3 * i + 1], xyh[3 * i + 2]);
             }
             writer.appendRaw(ch.id, buf, buf.length, now());
+            mirror(key, "struct:Pose2d[]", buf);
             ch.last = xyh.clone();
             ch.written = true;
         } catch (IOException e) {
@@ -341,6 +368,7 @@ public final class FlightLog {
             Channel ch = channel(key, "string[]");
             if (ch == null || (ch.written && Arrays.equals(values, (String[]) ch.last))) return;
             writer.appendStringArray(ch.id, values, now());
+            mirror(key, "string[]", values.clone());
             ch.last = values.clone();
             ch.written = true;
         } catch (IOException e) {
@@ -356,6 +384,7 @@ public final class FlightLog {
             Channel ch = channel(key, "raw");
             if (ch == null || (ch.written && Arrays.equals(value, (byte[]) ch.last))) return;
             writer.appendRaw(ch.id, value, value.length, now());
+            mirror(key, "raw", value.clone());
             ch.last = value.clone();
             ch.written = true;
         } catch (IOException e) {
@@ -501,6 +530,7 @@ public final class FlightLog {
             byte[] last = (byte[]) ch.last;
             if (ch.written && last != null && regionEquals(last, structBuffer, length)) return;
             writer.appendRaw(ch.id, structBuffer, length, now());
+            mirror(key, "struct:" + type, Arrays.copyOf(structBuffer, length));
             if (last == null || last.length != length) {
                 last = new byte[length];
                 ch.last = last;
@@ -533,6 +563,7 @@ public final class FlightLog {
             Channel ch = channel(key, "double[]");
             if (ch == null || (ch.written && Arrays.equals(values, (double[]) ch.last))) return;
             writer.appendDoubleArray(ch.id, values, now());
+            mirror(key, "double[]", values.clone());
             ch.last = values.clone();
             ch.written = true;
         } catch (IOException e) {
@@ -547,6 +578,7 @@ public final class FlightLog {
             Channel ch = channel(key, "int64[]");
             if (ch == null || (ch.written && Arrays.equals(values, (long[]) ch.last))) return;
             writer.appendInt64Array(ch.id, values, now());
+            mirror(key, "int[]", values.clone());
             ch.last = values.clone();
             ch.written = true;
         } catch (IOException e) {
@@ -569,6 +601,7 @@ public final class FlightLog {
             long[] wide = new long[values.length];
             for (int i = 0; i < values.length; i++) wide[i] = values[i];
             writer.appendInt64Array(ch.id, wide, now());
+            mirror(key, "int[]", wide);
             ch.last = wide;
             ch.written = true;
         } catch (IOException e) {
@@ -583,6 +616,7 @@ public final class FlightLog {
             Channel ch = channel(key, "boolean[]");
             if (ch == null || (ch.written && Arrays.equals(values, (boolean[]) ch.last))) return;
             writer.appendBooleanArray(ch.id, values, now());
+            mirror(key, "boolean[]", values.clone());
             ch.last = values.clone();
             ch.written = true;
         } catch (IOException e) {
@@ -606,7 +640,9 @@ public final class FlightLog {
     private void appendEvent(String message) {
         try {
             Channel ch = channel("Events", "string");
-            if (ch != null) writer.appendString(ch.id, message, now());
+            if (ch == null) return;
+            writer.appendString(ch.id, message, now());
+            mirror("Events", "string", message);
         } catch (IOException e) {
             fail(e);
         }
@@ -657,6 +693,13 @@ public final class FlightLog {
                     + ", then given " + type + " -- later values ignored");
         }
         return null;
+    }
+
+    /** Sends a value just written to the mirror, if there is one. NT4 calls
+     *  WPILOG's {@code int64} {@code int}. */
+    private void mirror(String key, String ntType, Object value) {
+        Nt4Server server = live;
+        if (server != null) server.set("/" + key, ntType, value);
     }
 
     private static void remember(Channel ch, long bits) {
