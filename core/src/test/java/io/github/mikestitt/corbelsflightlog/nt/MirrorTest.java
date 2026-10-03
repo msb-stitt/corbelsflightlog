@@ -127,6 +127,49 @@ public class MirrorTest {
     }
 
     @Test
+    public void valuesRecordedBeforeMirroringAreSentWhenItBegins() throws IOException {
+        log.mirrorTo(null);
+        log.recordOutput("d", 1.5);
+        log.recordOutput("f", 2.5f);
+        log.recordOutput("i", 7L);
+        log.recordOutput("b", true);
+        log.recordOutput("s", "hi");
+        log.recordOutput("da", new double[]{1, 2});
+        log.recordOutput("ia", new long[]{3});
+        log.recordOutput("ba", new boolean[]{true});
+        log.recordOutput("sa", new String[]{"a"});
+        log.recordOutput("raw", new byte[]{9});
+        log.pose2d("p", 1, 2, 0.5);
+        log.pose("pedro", 72, 72, 0);
+        log.poses("path", new double[]{72, 72, 0, 72, 72, 0});
+        FlightLog.event("not replayed");
+        log.mirrorTo(server);
+        try (RawClient c = subscribed()) {
+            c.readUntil(2000, "every value", () -> c.announceOf("/path") != null
+                    && c.values.size() >= 10 + 13);
+            assertEquals(1.5, valueOf(c, "/d", "double"));
+            assertEquals(2.5f, valueOf(c, "/f", "float"));
+            assertEquals(7L, valueOf(c, "/i", "int"));
+            assertEquals(true, valueOf(c, "/b", "boolean"));
+            assertEquals("hi", valueOf(c, "/s", "string"));
+            assertEquals(Arrays.asList(1.0, 2.0), valueOf(c, "/da", "double[]"));
+            assertEquals(Arrays.asList(3L), valueOf(c, "/ia", "int[]"));
+            assertEquals(Arrays.asList(true), valueOf(c, "/ba", "boolean[]"));
+            assertEquals(Arrays.asList("a"), valueOf(c, "/sa", "string[]"));
+            assertArrayEquals(new byte[]{9}, (byte[]) valueOf(c, "/raw", "raw"));
+            ByteBuffer pose = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN);
+            pose.putDouble(1).putDouble(2).putDouble(0.5);
+            assertArrayEquals(pose.array(), (byte[]) valueOf(c, "/p", "struct:Pose2d"));
+            // A Pedro pose at the field's centre is WPILib's origin, turned a quarter.
+            ByteBuffer centre = ByteBuffer.allocate(24).order(ByteOrder.LITTLE_ENDIAN);
+            centre.putDouble(0).putDouble(0).putDouble(Math.PI / 2 * FlightLog.fieldQuarterTurns);
+            assertArrayEquals(centre.array(), (byte[]) valueOf(c, "/pedro", "struct:Pose2d"));
+            assertEquals(48, ((byte[]) valueOf(c, "/path", "struct:Pose2d[]")).length);
+            assertNull("an event is not a value to replay", c.announceOf("/Events"));
+        }
+    }
+
+    @Test
     public void mirroringToNullStopsIt() throws IOException {
         log.mirrorTo(null);
         log.recordOutput("after", 1.0);

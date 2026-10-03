@@ -196,9 +196,9 @@ public final class FlightLog {
     /**
      * Sends every value this log records to {@code server} as well, under the
      * same name and type, so AdvantageScope shows live what the file holds
-     * afterwards. Sends the struct schemas at once. Only values recorded from
-     * now on are sent, and nothing is sent once the log stops recording.
-     * {@code null} stops mirroring.
+     * afterwards. Sends the struct schemas, and the last value of every
+     * channel already written, at once. Nothing is sent once the log stops
+     * recording. {@code null} stops mirroring.
      */
     public void mirrorTo(Nt4Server server) {
         live = server;
@@ -207,6 +207,51 @@ public final class FlightLog {
             server.set("/.schema/struct:" + schema[0], "structschema",
                     schema[1].getBytes(StandardCharsets.UTF_8));
         }
+        if (writer == null) return;
+        for (Map.Entry<String, Channel> e : channels.entrySet()) {
+            Object value = lastValue(e.getValue());
+            if (value != null) mirror(e.getKey(), ntType(e.getValue().type), value);
+        }
+    }
+
+    /** A channel's last value, in the form {@link Nt4Server#set} takes; null
+     *  if it has none, as {@code /Events} has none. */
+    private Object lastValue(Channel ch) {
+        if (!ch.written) return null;
+        switch (ch.type) {
+            case "double": return Double.longBitsToDouble(ch.bits);
+            case "float": return Float.intBitsToFloat((int) ch.bits);
+            case "int64": return ch.bits;
+            case "boolean": return ch.bits != 0;
+            case "struct:Pose2d":
+                if (ch.last instanceof byte[]) return ((byte[]) ch.last).clone();
+                byte[] pose = new byte[POSE_BYTES];
+                encodePose(pose, 0, ch.x, ch.y, ch.h);
+                return pose;
+            case "struct:Pose2d[]": {
+                double[] xyh = (double[]) ch.last;
+                byte[] buf = new byte[POSE_BYTES * (xyh.length / 3)];
+                for (int i = 0; i < xyh.length / 3; i++) {
+                    encodePose(buf, POSE_BYTES * i, xyh[3 * i], xyh[3 * i + 1], xyh[3 * i + 2]);
+                }
+                return buf;
+            }
+            default: break;
+        }
+        Object last = ch.last;
+        if (last instanceof byte[]) return ((byte[]) last).clone();
+        if (last instanceof double[]) return ((double[]) last).clone();
+        if (last instanceof long[]) return ((long[]) last).clone();
+        if (last instanceof boolean[]) return ((boolean[]) last).clone();
+        if (last instanceof String[]) return ((String[]) last).clone();
+        return last;
+    }
+
+    /** NT4 calls WPILOG's {@code int64} {@code int}; every other type has one name. */
+    private static String ntType(String wpilogType) {
+        if (wpilogType.equals("int64")) return "int";
+        if (wpilogType.equals("int64[]")) return "int[]";
+        return wpilogType;
     }
 
     // ------------------------------------------------------------ scalars
