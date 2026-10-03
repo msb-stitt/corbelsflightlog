@@ -145,6 +145,18 @@ public class Nt4ServerTest {
     }
 
     @Test
+    public void anEqualValueIsNotSentAgain() throws IOException {
+        server.set("/a", "double[]", new double[]{1, 2});
+        try (RawClient c = RawClient.connect(server.port(), Nt4Server.V41)) {
+            c.sendText(ALL);
+            c.readUntil(2000, "/a", () -> !c.values.isEmpty());
+            server.set("/a", "double[]", new double[]{1, 2});
+            c.readFor(300);
+            assertEquals(1, c.values.size());
+        }
+    }
+
+    @Test
     public void topicsOnlyAnnouncesAndSendsNoValues() throws IOException {
         server.set("/x", "double", 1.0);
         try (RawClient c = RawClient.connect(server.port(), Nt4Server.V41)) {

@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -118,7 +119,7 @@ public final class Nt4Server {
      * {@code Float}, {@code String}, {@code byte[]}, {@code boolean[]},
      * {@code double[]}, {@code long[]}, {@code float[]} or {@code String[]} to
      * match. A topic's type is fixed by its first value; a value of another
-     * type is ignored.
+     * type is ignored. A value equal to the last is not sent again.
      */
     public void set(String name, String type, Object value) {
         if (closed || name == null || type == null || value == null) return;
@@ -131,6 +132,7 @@ public final class Nt4Server {
                 return;
             }
             t.serverPublished = true;
+            if (t.value != null && Arrays.deepEquals(new Object[]{t.value}, new Object[]{value})) return;
             t.value = value;
             t.timestamp = nowMicros();
             t.seq++;
