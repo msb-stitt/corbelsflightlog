@@ -24,6 +24,27 @@ folder is in use. To log somewhere else entirely -- a USB stick, say -- call
 The hub's **Download Logs** button, on its Manage page, fetches the SDK's
 `robotControllerLog.txt`, not these.
 
+## Watching live
+
+`FtcFlightLog.openLive(this)` opens a log as `open` does and also sends every
+value it records to AdvantageScope as it is recorded, over NetworkTables 4. In
+AdvantageScope, set **Robot Address** to `192.168.43.1` under **AdvantageScope >
+Settings…**, then choose **File > Connect to Robot > NetworkTables 4**; the
+values appear under the same names as in the file.
+
+The server is `Nt4Server`, in `corbelsflightlog-core`: plain Java with no
+libraries, on port 5810. It starts on the first `openLive` and runs until the
+Robot Controller app stops. A program off the robot, such as a simulator, uses
+`Nt4Server.shared()` and `FlightLog.mirrorTo(server)` directly.
+
+**For practice only.** FTC rule R704 forbids third-party telemetry over Wi-Fi at
+competitions, so a competition OpMode opens its log with `open`, which starts no
+server.
+
+What the server leaves out of NetworkTables 4: the `all` subscribe option (each
+send carries the latest value), meta-topics such as `$clients`, saving
+`persistent` topics, TLS, and NetworkTables 3.
+
 ## Housekeeping
 
 Logs are capped at **2 GiB** in total. When a log is opened and the folder is

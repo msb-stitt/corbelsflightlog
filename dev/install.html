@@ -218,12 +218,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/MikeStitt/corbelsflightlog/blob/main/docs/install.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/msb-stitt/corbelsflightlog/blob/main/docs/install.md?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/MikeStitt/corbelsflightlog/edit/main/docs/install.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/msb-stitt/corbelsflightlog/edit/main/docs/install.md" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -250,28 +250,29 @@
 <span class="o">}</span>
 
 <span class="n">dependencies</span><span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-core:v0.2.1'</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-core:VERSION'</span>
 <span class="w">    </span><span class="c1">// optional, if you use Pedro Pathing:</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-pedro:v0.2.1'</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-pedro:VERSION'</span>
 <span class="w">    </span><span class="c1">// optional, if you already use WPILib geometry types:</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-wpilib:v0.2.1'</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-wpilib:VERSION'</span>
 <span class="w">    </span><span class="c1">// the Control Hub and Panels glue -- see the note below:</span>
-<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-ftc:v0.2.1'</span>
+<span class="w">    </span><span class="n">implementation</span><span class="w"> </span><span class="s1">'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-ftc:VERSION'</span>
 <span class="o">}</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">VERSION</span></code> is a release tag, such as <code class="docutils literal notranslate"><span class="pre">v1.2.3</span></code>;
+<a class="reference external" href="https://github.com/msb-stitt/corbelsflightlog/releases">the releases page</a>
+lists them, newest first.</p>
 <section id="about-corbelsflightlog-ftc">
 <h3>About <code class="docutils literal notranslate"><span class="pre">corbelsflightlog-ftc</span></code><a class="headerlink" href="#about-corbelsflightlog-ftc" title="Link to this heading">¶</a></h3>
-<p>It is an Android library rather than a plain jar, so JitPack has to build it
-with an Android SDK. <strong>v0.2.1 is the first release that attempts this</strong>, and the
-attempt is allowed to fail without taking the other three modules with it.</p>
-<p>Check whether it worked before relying on it:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">jitpack</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">com</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">MikeStitt</span><span class="o">/</span><span class="n">corbelsflightlog</span><span class="o">/</span><span class="n">v0</span><span class="mf">.2.1</span><span class="o">/</span><span class="n">build</span><span class="o">.</span><span class="n">log</span>
+<p>It is an Android library rather than a plain jar, so JitPack builds it with an
+Android SDK. It has built there since v0.2.1. If a version will not resolve,
+its build log says why:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">jitpack</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">com</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">msb</span><span class="o">-</span><span class="n">stitt</span><span class="o">/</span><span class="n">corbelsflightlog</span><span class="o">/</span><span class="n">VERSION</span><span class="o">/</span><span class="n">build</span><span class="o">.</span><span class="n">log</span>
 </pre></div>
 </div>
-<p>If <code class="docutils literal notranslate"><span class="pre">-ftc</span></code> is not there, build it yourself – clone this repository and run
-<code class="docutils literal notranslate"><span class="pre">./gradlew</span> <span class="pre">publishToMavenLocal</span></code>, then add <code class="docutils literal notranslate"><span class="pre">mavenLocal()</span></code> to your repositories.
-The other three modules are plain Java and are unaffected.</p>
+<p>To build it yourself instead, clone this repository and run
+<code class="docutils literal notranslate"><span class="pre">./gradlew</span> <span class="pre">publishToMavenLocal</span></code>, then add <code class="docutils literal notranslate"><span class="pre">mavenLocal()</span></code> to your repositories.</p>
 <p>JitPack builds a tag the first time someone asks for it, so the first download
 of a new version is slow. After that it’s cached.</p>
 </section>

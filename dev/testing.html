@@ -218,12 +218,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/MikeStitt/corbelsflightlog/blob/main/docs/testing.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/msb-stitt/corbelsflightlog/blob/main/docs/testing.md?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/MikeStitt/corbelsflightlog/edit/main/docs/testing.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/msb-stitt/corbelsflightlog/edit/main/docs/testing.md" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -242,30 +242,327 @@
         <article role="main" id="furo-main-content">
           <section id="testing">
 <h1>Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h1>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>./gradlew<span class="w"> </span>build<span class="w">                                  </span><span class="c1"># core and pedro</span>
-./gradlew<span class="w"> </span>:ftc:assembleRelease<span class="w">                   </span><span class="c1"># needs the Android SDK</span>
+<p>The tests are sorted by where they run: on any computer, on a Control Hub joined
+by USB with nobody at it, and with a person at the robot. Each says which part
+of the library it covers.</p>
+<section id="on-a-build-computer-and-on-github-actions">
+<h2>On a build computer, and on GitHub Actions<a class="headerlink" href="#on-a-build-computer-and-on-github-actions" title="Link to this heading">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>./gradlew<span class="w"> </span>build<span class="w">                                   </span><span class="c1"># every module's tests</span>
 pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>tools/logcheck/requirements.txt
 python<span class="w"> </span>-m<span class="w"> </span>unittest<span class="w"> </span>discover<span class="w"> </span>-s<span class="w"> </span>tools/logcheck<span class="w"> </span>-v<span class="w">  </span><span class="c1"># after the Gradle tests</span>
 </pre></div>
 </div>
-<section id="what-s-checked">
-<h2>What’s checked<a class="headerlink" href="#what-s-checked" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">./gradlew</span> <span class="pre">build</span></code> builds <code class="docutils literal notranslate"><span class="pre">:ftc</span></code> and <code class="docutils literal notranslate"><span class="pre">:checks</span></code> only when an Android SDK is found,
+through <code class="docutils literal notranslate"><span class="pre">local.properties</span></code>, <code class="docutils literal notranslate"><span class="pre">ANDROID_HOME</span></code> or <code class="docutils literal notranslate"><span class="pre">ANDROID_SDK_ROOT</span></code>; the rest
+builds anywhere. CI runs the same: <code class="docutils literal notranslate"><span class="pre">ci.yml</span></code>’s <code class="docutils literal notranslate"><span class="pre">jvm</span></code> job runs <code class="docutils literal notranslate"><span class="pre">./gradlew</span> <span class="pre">build</span></code>
+on a runner that has an Android SDK, so <code class="docutils literal notranslate"><span class="pre">:ftc</span></code> and <code class="docutils literal notranslate"><span class="pre">:checks</span></code> with it; its
+<code class="docutils literal notranslate"><span class="pre">wpilib-parity</span></code> job runs the Python tests, and its <code class="docutils literal notranslate"><span class="pre">android</span></code> job builds <code class="docutils literal notranslate"><span class="pre">:ftc</span></code>.</p>
 <p><strong>Against WPILib itself, not our reading of the spec.</strong> The Java tests read
 every file back with WPILib’s own Java reader, copied unmodified into
 <code class="docutils literal notranslate"><span class="pre">core/src/test</span></code> under its BSD licence. The Python tests in <code class="docutils literal notranslate"><span class="pre">tools/logcheck</span></code>
 write the same scenario with WPILib’s <em>native</em> writer and require the bytes to
 match, and check the struct schemas, encoding and pose geometry against
-WPILib’s own code through <code class="docutils literal notranslate"><span class="pre">robotpy</span></code>.</p>
+WPILib’s own code through <code class="docutils literal notranslate"><span class="pre">robotpy</span></code>. <code class="docutils literal notranslate"><span class="pre">tools/logcheck/README.md</span></code> lists them and
+says what each compares against.</p>
 <p><strong>Pedro is exercised for real.</strong> The <code class="docutils literal notranslate"><span class="pre">pedro</span></code> tests drive an actual Pedro
 <code class="docutils literal notranslate"><span class="pre">Follower</span></code> with a simulated drivetrain through a full path and through teleop,
 including the end-of-path window that used to throw.</p>
-</section>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Tests</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">WpiLogWriter</span></code>, the WPILOG format</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">WpiLogWriterTest</span></code>; <code class="docutils literal notranslate"><span class="pre">ParityFilesTest</span></code> with <code class="docutils literal notranslate"><span class="pre">tools/logcheck</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FlightLog</span></code> recording, types, change detection, failures</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FlightLogTest</span></code>, <code class="docutils literal notranslate"><span class="pre">StringArrayAndRawTest</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Structs and the field frame, <code class="docutils literal notranslate"><span class="pre">fieldPose</span></code>, <code class="docutils literal notranslate"><span class="pre">fieldQuarterTurns</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StructTypesTest</span></code>, <code class="docutils literal notranslate"><span class="pre">FieldPoseTest</span></code>, <code class="docutils literal notranslate"><span class="pre">PedroPose3dTest</span></code>; <code class="docutils literal notranslate"><span class="pre">tools/logcheck</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Disk budget</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DiskBudgetTest</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Flush cost</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FlightLogTest</span></code>, <code class="docutils literal notranslate"><span class="pre">endLoopFlushesAboutOnceASecond</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PedroFlightLog</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PedroFlightLogTest</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FtcFlightLog</span></code>: folder, auto-close, registration</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FtcFlightLogTest</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>The download page, <code class="docutils literal notranslate"><span class="pre">LogWebHandlers</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FtcFlightLogTest</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FtcGeometry</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FtcGeometryTest</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">WpiGeometry</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">WpiGeometryTest</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Nt4Server</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Nt4ServerTest</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FlightLog.mirrorTo</span></code>, <code class="docutils literal notranslate"><span class="pre">FtcFlightLog.openLive</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MirrorTest</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>The robot checks compile against the FTC SDK</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:checks</span></code>, built by <code class="docutils literal notranslate"><span class="pre">./gradlew</span> <span class="pre">build</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">PanelsMirror</span></code> has no test.</p>
 <section id="adding-to-the-parity-scenario">
-<h2>Adding to the parity scenario<a class="headerlink" href="#adding-to-the-parity-scenario" title="Link to this heading">¶</a></h2>
+<h3>Adding to the parity scenario<a class="headerlink" href="#adding-to-the-parity-scenario" title="Link to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">tools/logcheck/scenario.tsv</span></code> is read by both halves — the Java test writes it
 with our writer, the Python test with WPILib’s. Add a line and both pick it up.
 A field missing at the end of a line counts as empty, so editors that strip
 trailing whitespace can’t change its meaning.</p>
+</section>
+</section>
+<section id="on-a-control-hub-by-usb-with-nobody-at-it">
+<h2>On a Control Hub by USB, with nobody at it<a class="headerlink" href="#on-a-control-hub-by-usb-with-nobody-at-it" title="Link to this heading">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>./gradlew<span class="w"> </span>:checks:usbGate
+</pre></div>
+</div>
+<p>It needs the Android SDK, for <code class="docutils literal notranslate"><span class="pre">adb</span></code>, and a Control Hub joined to this computer
+by USB running a robot project that has:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">checks/opmodes/</span></code> copied into its TeamCode, with the package declarations
+changed to match;</p></li>
+<li><p>this library’s <code class="docutils literal notranslate"><span class="pre">-ftc</span></code> module, and Panels, which <code class="docutils literal notranslate"><span class="pre">-ftc</span></code> already depends on.</p></li>
+</ul>
+<p>The gate forwards ports 5810 and 8002 over <code class="docutils literal notranslate"><span class="pre">adb</span></code>, then starts <strong>Log 9:
+NetworkTables API</strong> through Panels’ own socket, the one its <strong>OpModes Control</strong>
+uses. It clicks nothing and needs no browser. It reads Log 9 back with WPILib’s
+NetworkTables client, stops it and starts it again, and reads it again. Then it
+pulls that run’s log with <code class="docutils literal notranslate"><span class="pre">adb</span> <span class="pre">pull</span></code> and checks it holds every value the client
+received. After an install or a reboot the Robot Controller app takes about
+40 s to bring Panels up; the gate waits up to 3 minutes.</p>
+<p>A pass prints <code class="docutils literal notranslate"><span class="pre">ok</span></code> on every line and ends <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">passed,</span> <span class="pre">0</span> <span class="pre">failed</span></code>, exit 0. Any
+failure prints <code class="docutils literal notranslate"><span class="pre">FAILED</span></code> with what was expected and what came, and exits 1.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>What the gate checks</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Nt4Server</span></code></p></td>
+<td><p>Every type the log records, by name, type and value; <code class="docutils literal notranslate"><span class="pre">prefix</span></code> and <code class="docutils literal notranslate"><span class="pre">topicsonly</span></code> subscriptions at each level down to <code class="docutils literal notranslate"><span class="pre">/apicheck/deep/a/b/c/d/</span></code>; the struct schemas; values that change every loop; a second run starting over</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FlightLog.mirrorTo</span></code></p></td>
+<td><p>A value recorded before the server started is still sent</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FtcFlightLog</span></code> folder and <code class="docutils literal notranslate"><span class="pre">FlightLog</span></code> recording</p></td>
+<td><p>The pulled log is a valid WPILOG holding every value sent live</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Log 9 turns the NetworkTables server on. FTC rule R704 forbids third-party
+telemetry over Wi-Fi at competitions, so it is for practice only.</p>
+</section>
+<section id="with-a-person-at-the-robot">
+<h2>With a person at the robot<a class="headerlink" href="#with-a-person-at-the-robot" title="Link to this heading">¶</a></h2>
+<p>Everything here needs a Control Hub. Nothing in it needs a drivetrain: the
+<code class="docutils literal notranslate"><span class="pre">LogCheck</span></code> OpModes run on any configuration. A GUI driven by Claude counts as a
+person. Work top to bottom; each step says what a pass looks like.</p>
+<section id="getting-the-checks-onto-a-robot">
+<h3>Getting the checks onto a robot<a class="headerlink" href="#getting-the-checks-onto-a-robot" title="Link to this heading">¶</a></h3>
+<p>In this repository:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>./gradlew<span class="w"> </span>publishToMavenLocal
+</pre></div>
+</div>
+<p>That writes <code class="docutils literal notranslate"><span class="pre">corbelsflightlog-core</span></code>, <code class="docutils literal notranslate"><span class="pre">-ftc</span></code>, <code class="docutils literal notranslate"><span class="pre">-pedro</span></code> and <code class="docutils literal notranslate"><span class="pre">-wpilib</span></code> to <code class="docutils literal notranslate"><span class="pre">~/.m2</span></code>.
+A robot project with <code class="docutils literal notranslate"><span class="pre">mavenLocal()</span></code> in its repositories, depending on <code class="docutils literal notranslate"><span class="pre">-core</span></code>
+and <code class="docutils literal notranslate"><span class="pre">-ftc</span></code>, picks them up. Copy <code class="docutils literal notranslate"><span class="pre">checks/opmodes/</span></code> into its TeamCode and change
+the package declarations to match, then build and deploy as usual.</p>
+</section>
+<section id="ftcflightlog-registration">
+<h3><code class="docutils literal notranslate"><span class="pre">FtcFlightLog</span></code> registration<a class="headerlink" href="#ftcflightlog-registration" title="Link to this heading">¶</a></h3>
+<p>Everything below depends on this. Start the Robot Controller app and look in
+Logcat, or in <code class="docutils literal notranslate"><span class="pre">robotControllerLog.txt</span></code>, for:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">corbelsflightlog</span><span class="p">:</span> <span class="n">logs</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168.43.1</span><span class="p">:</span><span class="mi">8080</span><span class="o">/</span><span class="n">corbelsflightlog</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">folder</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Present</strong> — <code class="docutils literal notranslate"><span class="pre">&#64;WebHandlerRegistrar</span></code> fired: the OpMode listener is attached,
+the download routes are up, and the line names the folder in use.</p></li>
+<li><p><strong>Absent</strong> — registration didn’t happen. The auto-close steps and the download
+page will fail too. The likely causes are the annotation not being scanned,
+or an exception inside <code class="docutils literal notranslate"><span class="pre">FtcFlightLog.register</span></code>, which is caught and logged as
+<code class="docutils literal notranslate"><span class="pre">corbelsflightlog:</span> <span class="pre">could</span> <span class="pre">not</span> <span class="pre">register</span></code>.</p></li>
+</ul>
+</section>
+<section id="where-the-files-go-log-6">
+<h3>Where the files go: Log 6<a class="headerlink" href="#where-the-files-go-log-6" title="Link to this heading">¶</a></h3>
+<p>Run <strong>Log 6: where are the logs?</strong></p>
+<p>It writes nothing. It reports the folder, whether it exists and is writable,
+free space, how many logs are there, and the budget.</p>
+<ul class="simple">
+<li><p><strong>Expected:</strong> a <code class="docutils literal notranslate"><span class="pre">corbelsflightlog</span></code> folder in the Robot Controller’s storage,
+<code class="docutils literal notranslate"><span class="pre">/sdcard/corbelsflightlog</span></code>. On a Control Hub that is <strong>internal</strong> storage; the
+name is historical and no card is involved.</p></li>
+<li><p><strong>Fallback:</strong> if it shows a path under the app’s own storage
+(<code class="docutils literal notranslate"><span class="pre">/data/user/0/com.qualcomm.ftcrobotcontroller/files/corbelsflightlog</span></code> or
+similar), the preferred folder wasn’t usable. Logging still works, and the
+download page still serves the files, but <code class="docutils literal notranslate"><span class="pre">adb</span> <span class="pre">pull</span></code> won’t reach them.</p></li>
+<li><p><strong>Writable: false</strong> — stop here; nothing below can pass.</p></li>
+</ul>
+</section>
+<section id="flightlog-recording-log-1">
+<h3><code class="docutils literal notranslate"><span class="pre">FlightLog</span></code> recording: Log 1<a class="headerlink" href="#flightlog-recording-log-1" title="Link to this heading">¶</a></h3>
+<p>Run <strong>Log 1: basics</strong> for a few seconds. Push the sticks, press A, B and X.</p>
+<ul class="simple">
+<li><p>Driver Station shows <code class="docutils literal notranslate"><span class="pre">Log</span></code> as a file name, not <code class="docutils literal notranslate"><span class="pre">off</span> <span class="pre">(...)</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Logs</span> <span class="pre">on</span> <span class="pre">disk</span></code> increments after the first run.</p></li>
+<li><p>Loop time looks sane, with a spike about once a second — that’s the flush.</p></li>
+</ul>
+<p><strong>Then download it:</strong> open <code class="docutils literal notranslate"><span class="pre">http://192.168.43.1:8080/corbelsflightlog</span></code> on a
+laptop on the robot’s Wi-Fi and click the newest file. Open it in
+AdvantageScope; <code class="docutils literal notranslate"><span class="pre">stick/leftY</span></code> should track what you did, and <code class="docutils literal notranslate"><span class="pre">/Events</span></code> should
+have an entry for each X press.</p>
+</section>
+<section id="ftcflightlog-auto-close-the-crash-case-log-2">
+<h3><code class="docutils literal notranslate"><span class="pre">FtcFlightLog</span></code> auto-close, the crash case: Log 2<a class="headerlink" href="#ftcflightlog-auto-close-the-crash-case-log-2" title="Link to this heading">¶</a></h3>
+<p>Run <strong>Log 2: crash mid-run</strong>. It throws on purpose after three seconds, and its
+<code class="docutils literal notranslate"><span class="pre">stop()</span></code> deliberately does nothing.</p>
+<ul class="simple">
+<li><p><strong>Pass:</strong> the Driver Station reports the crash, and the log downloads and
+opens with about three seconds of data, ending with the
+<code class="docutils literal notranslate"><span class="pre">crashing</span> <span class="pre">now,</span> <span class="pre">at</span> <span class="pre">loop</span> <span class="pre">N</span></code> event.</p></li>
+<li><p><strong>Fail:</strong> the file is missing, zero bytes, or AdvantageScope won’t open it.
+That means the post-stop hook didn’t run; check registration, above.</p></li>
+</ul>
+<p>This is the case that fails without the lifecycle hook.</p>
+</section>
+<section id="ftcflightlog-auto-close-the-forgetful-case-log-3">
+<h3><code class="docutils literal notranslate"><span class="pre">FtcFlightLog</span></code> auto-close, the forgetful case: Log 3<a class="headerlink" href="#ftcflightlog-auto-close-the-forgetful-case-log-3" title="Link to this heading">¶</a></h3>
+<p>Run <strong>Log 3: forgot to close</strong> for a few seconds, then press stop normally.</p>
+<ul class="simple">
+<li><p><strong>Pass:</strong> the file’s last <code class="docutils literal notranslate"><span class="pre">/Events</span></code> entry matches roughly the last loop count
+shown on the Driver Station. Nothing lost at the end.</p></li>
+</ul>
+<p>Then, for the third path: start Log 3, press stop, and <strong>immediately init
+another OpMode</strong>. The previous file should still be complete — that’s the
+pre-init backstop.</p>
+</section>
+<section id="the-download-page">
+<h3>The download page<a class="headerlink" href="#the-download-page" title="Link to this heading">¶</a></h3>
+<p>At <code class="docutils literal notranslate"><span class="pre">http://192.168.43.1:8080/corbelsflightlog</span></code>:</p>
+<ul class="simple">
+<li><p>Newest first, with sizes and timestamps.</p></li>
+<li><p>A file downloads and opens in AdvantageScope.</p></li>
+<li><p>The folder shown at the top matches Log 6’s.</p></li>
+</ul>
+<p>Then try, in the address bar:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://192.168.43.1:8080/corbelsflightlog/download?file=../secret.wpilog
+</pre></div>
+</div>
+<p><strong>Expected: a “400” plain-text message</strong>, not a file and not a stack trace.
+Same for <code class="docutils literal notranslate"><span class="pre">?file=notes.txt</span></code>.</p>
+</section>
+<section id="disk-budget-log-4">
+<h3>Disk budget: Log 4<a class="headerlink" href="#disk-budget-log-4" title="Link to this heading">¶</a></h3>
+<p>Run <strong>Log 4: disk budget</strong> three or four times. It drops the budget to 1 MB
+while it runs, and restores it on stop.</p>
+<ul class="simple">
+<li><p><strong>Pass:</strong> <code class="docutils literal notranslate"><span class="pre">Files</span></code> stops growing and the oldest logs disappear; <code class="docutils literal notranslate"><span class="pre">Total</span></code> stays
+near 1 MB.</p></li>
+<li><p>Drop a <code class="docutils literal notranslate"><span class="pre">notes.txt</span></code> into the log folder first if you want to confirm that
+non-log files are never deleted.</p></li>
+</ul>
+<p>After the last run, <strong>Log 6</strong> should show the budget back at 2048 MB.</p>
+</section>
+<section id="structs-and-the-field-frame-log-5">
+<h3>Structs and the field frame: Log 5<a class="headerlink" href="#structs-and-the-field-frame-log-5" title="Link to this heading">¶</a></h3>
+<p>Run <strong>Log 5: geometry</strong> for ten seconds or so. No hardware needed; it logs an
+imaginary robot going in a circle.</p>
+<p>In AdvantageScope:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Circle/Pose</span></code> on the <strong>2D Field</strong> — should go round in a circle, facing the
+way it travels.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Circle/Pose3d</span></code> on the <strong>3D Field</strong> — same circle, a metre up.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Circle/Speeds</span></code>, <code class="docutils literal notranslate"><span class="pre">Circle/Wheels</span></code>, <code class="docutils literal notranslate"><span class="pre">Circle/Twist</span></code> in a <strong>Table</strong>.</p></li>
+</ul>
+<p><strong><code class="docutils literal notranslate"><span class="pre">fieldQuarterTurns</span></code>.</strong> If the circle is rotated or mirrored relative to the
+field image, set <code class="docutils literal notranslate"><span class="pre">FlightLog.fieldQuarterTurns</span></code> to 0, 1, 2 or 3 until it
+matches. It only affects the display, and only for logs written afterwards.
+In September 2026, 1 matched the 2026-2027 field.</p>
+<p><code class="docutils literal notranslate"><span class="pre">FtcGeometry</span></code>’s mapping of a real IMU’s yaw, pitch and roll is checked only by
+<code class="docutils literal notranslate"><span class="pre">FtcGeometryTest</span></code>: Log 5 here logs no IMU, so tilting a hub shows nothing.</p>
+</section>
+<section id="flush-cost-loop-time-with-log-1">
+<h3>Flush cost: loop time with Log 1<a class="headerlink" href="#flush-cost-loop-time-with-log-1" title="Link to this heading">¶</a></h3>
+<p>With <strong>Log 1</strong> running, watch <code class="docutils literal notranslate"><span class="pre">loop/ms</span></code> and its spikes.</p>
+<ul class="simple">
+<li><p>A spike roughly once a second is the storage flush; note how big it is.</p></li>
+<li><p>Run once with Panels enabled and once with it disabled
+(the “Enable/Disable Panels” OpMode) for comparison.</p></li>
+</ul>
+<p>These numbers are the input to the remaining decision about batching writes per
+frame.</p>
+</section>
+<section id="flush-cost-is-the-storage-write-visible-at-all-log-8">
+<h3>Flush cost: is the storage write visible at all? Log 8<a class="headerlink" href="#flush-cost-is-the-storage-write-visible-at-all-log-8" title="Link to this heading">¶</a></h3>
+<p>Only worth running if you want the loop-cost question closed properly.</p>
+<p>The first loop-cost run showed a strong impulse train at <strong>3.94 Hz</strong> – one brief
+cost every 254 ms, with harmonics out to 35 Hz – while the logger’s own
+once-a-second flush measured <strong>9.7 microseconds</strong> against a 4 microsecond noise
+floor. 254 ms is almost certainly the Driver Station telemetry transmission, not
+us.</p>
+<p><strong>Log 8: 3 Hz flush beat</strong> writes 192 KB/s so the 64 KB buffer fills exactly
+three times a second, moves the Driver Station transmission to 200 ms (putting
+the SDK’s comb at 5, 10, 15 Hz, clear of ours), and skips <code class="docutils literal notranslate"><span class="pre">endLoop()</span></code> so its
+one-second flush cannot smear the beat.</p>
+<ul class="simple">
+<li><p>Run it for 20 to 30 seconds. <strong>It writes about 4 MB in 20 seconds</strong> – keep it
+short and delete the files afterwards.</p></li>
+<li><p>Download the log and run an FFT of <code class="docutils literal notranslate"><span class="pre">/loop/ms</span></code> against time.</p></li>
+</ul>
+<p><strong>A line at 3 Hz with harmonics at 6, 9, 12</strong> means storage writes do show up in
+loop time, and their size tells you what one costs. <strong>No line at 3 Hz</strong> means
+they are below the noise even at sixty times the normal rate – in which case
+nothing about how writes are batched could affect loop time.</p>
+<p>Either way, expect the 5 Hz comb from the Driver Station to be the largest thing
+in the spectrum.</p>
+</section>
+<section id="nt4server-and-flightlog-mirrorto-started-by-hand-log-9">
+<h3><code class="docutils literal notranslate"><span class="pre">Nt4Server</span></code> and <code class="docutils literal notranslate"><span class="pre">FlightLog.mirrorTo</span></code>, started by hand: Log 9<a class="headerlink" href="#nt4server-and-flightlog-mirrorto-started-by-hand-log-9" title="Link to this heading">¶</a></h3>
+<p>The same check as the USB gate, with a person starting the OpMode. Forward the
+port, or use <code class="docutils literal notranslate"><span class="pre">--host</span> <span class="pre">192.168.43.1</span></code> on the robot’s Wi-Fi:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>adb<span class="w"> </span>forward<span class="w"> </span>tcp:5810<span class="w"> </span>tcp:5810
+./gradlew<span class="w"> </span>:checks:ntApiCheck<span class="w"> </span>--args<span class="o">=</span><span class="s2">"--runs 2 --save received.txt"</span>
+</pre></div>
+</div>
+<p>Start <strong>Log 9: NetworkTables API</strong> from the Driver Station; when the checker
+asks, stop it and start it again. Then pull that run’s log and check it:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>./gradlew<span class="w"> </span>:checks:ntApiCheck<span class="w"> </span>--args<span class="o">=</span><span class="s2">"--log &lt;the pulled .wpilog&gt; --against received.txt"</span>
+</pre></div>
+</div>
+<p>The Driver Station shows <code class="docutils literal notranslate"><span class="pre">NetworkTables</span> <span class="pre">on,</span> <span class="pre">port</span> <span class="pre">5810</span></code>, the log’s name, and the
+step counting up. A pass ends <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">passed,</span> <span class="pre">0</span> <span class="pre">failed</span></code>. To watch the values in
+AdvantageScope instead, see <em>Watching live</em> in <a class="reference internal" href="viewing.html"><span class="std std-doc">Viewing a log</span></a>.</p>
+</section>
+<section id="what-to-bring-back">
+<h3>What to bring back<a class="headerlink" href="#what-to-bring-back" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Registration: present or absent, and the folder it named.</p></li>
+<li><p>Log 6: the folder, writable or not.</p></li>
+<li><p>Log 2: did the crashed run leave a readable log?</p></li>
+<li><p>The download page: does <code class="docutils literal notranslate"><span class="pre">?file=../secret.wpilog</span></code> get refused?</p></li>
+<li><p>Log 5: which <code class="docutils literal notranslate"><span class="pre">fieldQuarterTurns</span></code> matched.</p></li>
+<li><p>Loop time: typical <code class="docutils literal notranslate"><span class="pre">loop/ms</span></code> and the size of the once-a-second spike.</p></li>
+</ul>
+</section>
 </section>
 </section>
 
@@ -317,8 +614,27 @@ trailing whitespace can’t change its meaning.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Testing</a><ul>
-<li><a class="reference internal" href="#what-s-checked">What’s checked</a></li>
+<li><a class="reference internal" href="#on-a-build-computer-and-on-github-actions">On a build computer, and on GitHub Actions</a><ul>
 <li><a class="reference internal" href="#adding-to-the-parity-scenario">Adding to the parity scenario</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#on-a-control-hub-by-usb-with-nobody-at-it">On a Control Hub by USB, with nobody at it</a></li>
+<li><a class="reference internal" href="#with-a-person-at-the-robot">With a person at the robot</a><ul>
+<li><a class="reference internal" href="#getting-the-checks-onto-a-robot">Getting the checks onto a robot</a></li>
+<li><a class="reference internal" href="#ftcflightlog-registration"><code class="docutils literal notranslate"><span class="pre">FtcFlightLog</span></code> registration</a></li>
+<li><a class="reference internal" href="#where-the-files-go-log-6">Where the files go: Log 6</a></li>
+<li><a class="reference internal" href="#flightlog-recording-log-1"><code class="docutils literal notranslate"><span class="pre">FlightLog</span></code> recording: Log 1</a></li>
+<li><a class="reference internal" href="#ftcflightlog-auto-close-the-crash-case-log-2"><code class="docutils literal notranslate"><span class="pre">FtcFlightLog</span></code> auto-close, the crash case: Log 2</a></li>
+<li><a class="reference internal" href="#ftcflightlog-auto-close-the-forgetful-case-log-3"><code class="docutils literal notranslate"><span class="pre">FtcFlightLog</span></code> auto-close, the forgetful case: Log 3</a></li>
+<li><a class="reference internal" href="#the-download-page">The download page</a></li>
+<li><a class="reference internal" href="#disk-budget-log-4">Disk budget: Log 4</a></li>
+<li><a class="reference internal" href="#structs-and-the-field-frame-log-5">Structs and the field frame: Log 5</a></li>
+<li><a class="reference internal" href="#flush-cost-loop-time-with-log-1">Flush cost: loop time with Log 1</a></li>
+<li><a class="reference internal" href="#flush-cost-is-the-storage-write-visible-at-all-log-8">Flush cost: is the storage write visible at all? Log 8</a></li>
+<li><a class="reference internal" href="#nt4server-and-flightlog-mirrorto-started-by-hand-log-9"><code class="docutils literal notranslate"><span class="pre">Nt4Server</span></code> and <code class="docutils literal notranslate"><span class="pre">FlightLog.mirrorTo</span></code>, started by hand: Log 9</a></li>
+<li><a class="reference internal" href="#what-to-bring-back">What to bring back</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

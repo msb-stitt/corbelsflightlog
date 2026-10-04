@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"io.github.mikestitt.corbelsflightlog","l":"FlightLog"},{"p":"io.github.mikestitt.corbelsflightlog","l":"WpiLogWriter"}];updateSearchResults();
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"io.github.mikestitt.corbelsflightlog","l":"FlightLog"},{"p":"io.github.mikestitt.corbelsflightlog.nt","l":"Nt4Server"},{"p":"io.github.mikestitt.corbelsflightlog","l":"WpiLogWriter"}];updateSearchResults();

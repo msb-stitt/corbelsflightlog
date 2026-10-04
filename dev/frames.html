@@ -218,12 +218,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/MikeStitt/corbelsflightlog/blob/main/docs/frames.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/msb-stitt/corbelsflightlog/blob/main/docs/frames.md?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/MikeStitt/corbelsflightlog/edit/main/docs/frames.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/msb-stitt/corbelsflightlog/edit/main/docs/frames.md" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -344,6 +344,18 @@ thing: one channel to look at, one to reason about.</p>
 <p>Change-only writing means the second channel costs nothing while the robot is
 still.</p>
 </section>
+<section id="converting-without-logging">
+<h2>Converting without logging<a class="headerlink" href="#converting-without-logging" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">FlightLog.fieldPose(xIn,</span> <span class="pre">yIn,</span> <span class="pre">headingRad)</span></code> returns <code class="docutils literal notranslate"><span class="pre">{x,</span> <span class="pre">y,</span> <span class="pre">headingRad}</span></code> in
+AdvantageScope’s frame: the same conversion <code class="docutils literal notranslate"><span class="pre">pose</span></code> applies, on its own, for code
+that draws the robot somewhere this library does not write – a NetworkTables
+publisher, say.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kt">double</span><span class="o">[]</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FlightLog</span><span class="p">.</span><span class="na">fieldPose</span><span class="p">(</span><span class="n">pose</span><span class="p">.</span><span class="na">x</span><span class="p">(),</span><span class="w"> </span><span class="n">pose</span><span class="p">.</span><span class="na">y</span><span class="p">(),</span><span class="w"> </span><span class="n">pose</span><span class="p">.</span><span class="na">heading</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>It is static and reads <code class="docutils literal notranslate"><span class="pre">fieldQuarterTurns</span></code>, so it turns the field the same way
+the logs do.</p>
+</section>
 <section id="checking-fieldquarterturns">
 <h2>Checking <code class="docutils literal notranslate"><span class="pre">fieldQuarterTurns</span></code><a class="headerlink" href="#checking-fieldquarterturns" title="Link to this heading">¶</a></h2>
 <p>It is display-only – nothing on the robot reads it – and it must match the
@@ -439,6 +451,7 @@ a wrong quarter turn or a mirrored axis shows up immediately.</p>
 <li><a class="reference internal" href="#recipe-for-the-field-view">Recipe: for the field view</a></li>
 <li><a class="reference internal" href="#recipe-for-the-maths">Recipe: for the maths</a></li>
 <li><a class="reference internal" href="#both-at-once">Both at once</a></li>
+<li><a class="reference internal" href="#converting-without-logging">Converting without logging</a></li>
 <li><a class="reference internal" href="#checking-fieldquarterturns">Checking <code class="docutils literal notranslate"><span class="pre">fieldQuarterTurns</span></code></a></li>
 </ul>
 </li>

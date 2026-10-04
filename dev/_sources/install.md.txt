@@ -10,31 +10,32 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-core:v0.2.1'
+    implementation 'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-core:VERSION'
     // optional, if you use Pedro Pathing:
-    implementation 'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-pedro:v0.2.1'
+    implementation 'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-pedro:VERSION'
     // optional, if you already use WPILib geometry types:
-    implementation 'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-wpilib:v0.2.1'
+    implementation 'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-wpilib:VERSION'
     // the Control Hub and Panels glue -- see the note below:
-    implementation 'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-ftc:v0.2.1'
+    implementation 'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-ftc:VERSION'
 }
 ```
 
+`VERSION` is a release tag, such as `v1.2.3`;
+[the releases page](https://github.com/msb-stitt/corbelsflightlog/releases)
+lists them, newest first.
+
 ### About `corbelsflightlog-ftc`
 
-It is an Android library rather than a plain jar, so JitPack has to build it
-with an Android SDK. **v0.2.1 is the first release that attempts this**, and the
-attempt is allowed to fail without taking the other three modules with it.
-
-Check whether it worked before relying on it:
+It is an Android library rather than a plain jar, so JitPack builds it with an
+Android SDK. It has built there since v0.2.1. If a version will not resolve,
+its build log says why:
 
 ```
-https://jitpack.io/com/github/MikeStitt/corbelsflightlog/v0.2.1/build.log
+https://jitpack.io/com/github/msb-stitt/corbelsflightlog/VERSION/build.log
 ```
 
-If `-ftc` is not there, build it yourself -- clone this repository and run
+To build it yourself instead, clone this repository and run
 `./gradlew publishToMavenLocal`, then add `mavenLocal()` to your repositories.
-The other three modules are plain Java and are unaffected.
 
 JitPack builds a tag the first time someone asks for it, so the first download
 of a new version is slow. After that it's cached.

@@ -98,6 +98,20 @@ log.pose2d("Robot/PedroPose", x, y, heading);       // for the numbers
 Change-only writing means the second channel costs nothing while the robot is
 still.
 
+## Converting without logging
+
+`FlightLog.fieldPose(xIn, yIn, headingRad)` returns `{x, y, headingRad}` in
+AdvantageScope's frame: the same conversion `pose` applies, on its own, for code
+that draws the robot somewhere this library does not write -- a NetworkTables
+publisher, say.
+
+```java
+double[] p = FlightLog.fieldPose(pose.x(), pose.y(), pose.heading());
+```
+
+It is static and reads `fieldQuarterTurns`, so it turns the field the same way
+the logs do.
+
 ## Checking `fieldQuarterTurns`
 
 It is display-only -- nothing on the robot reads it -- and it must match the
