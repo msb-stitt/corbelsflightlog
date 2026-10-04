@@ -6,6 +6,20 @@ the release workflow refuses a tag that doesn't.
 
 ## Unreleased
 
+## 0.3.1
+
+Documentation only; the library's code is unchanged.
+
+- The front page says what the library does: WPILOG files on the robot, the
+  same values live over NetworkTables 4, and the types it takes from Pedro
+  Pathing, the FTC SDK, WPILib and Panels.
+- A NetworkTables page, which *Watching live* in *Viewing a log* now points to.
+- *Logging values* covers `WpiGeometry` and `PanelsMirror`.
+- The site carries Javadoc for all four modules; `corbelsflightlog-ftc` and
+  `corbelsflightlog-wpilib` had none.
+- `FtcFlightLog`'s Javadoc names the folder logs go in,
+  `/sdcard/corbelsflightlog`, where it said a `logs` folder inside FIRST.
+
 ## 0.3.0
 
 - `corbelsflightlog-core`: `Nt4Server`, a NetworkTables 4 server in plain Java with
