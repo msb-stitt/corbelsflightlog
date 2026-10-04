@@ -196,6 +196,7 @@
 <li class="toctree-l1"><a class="reference internal" href="frames.html">Frames</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pedro.html">Pedro Pathing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="viewing.html">Viewing a log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networktables.html">NetworkTables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="format.html">The file format</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 </ul>
@@ -405,6 +406,22 @@ are composed here in the SDK’s order and axes and written as a quaternion.
 The SDK notes that a <code class="docutils literal notranslate"><span class="pre">Pose3D</span></code>’s axis mapping is defined by whatever produced
 it, so check the docs of the API you got it from.</p>
 </section>
+<section id="from-wpilib">
+<h3>From WPILib<a class="headerlink" href="#from-wpilib" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">corbelsflightlog-wpilib</span></code> writes WPILib’s own geometry, for code that already
+holds it:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">io.github.mikestitt.corbelsflightlog.wpilib.WpiGeometry</span><span class="p">;</span>
+
+<span class="n">WpiGeometry</span><span class="p">.</span><span class="na">recordOutput</span><span class="p">(</span><span class="n">log</span><span class="p">,</span><span class="w"> </span><span class="s">"Drive/Pose"</span><span class="p">,</span><span class="w"> </span><span class="n">pose</span><span class="p">);</span><span class="w">       </span><span class="c1">// a Pose2d</span>
+<span class="n">WpiGeometry</span><span class="p">.</span><span class="na">recordOutput</span><span class="p">(</span><span class="n">log</span><span class="p">,</span><span class="w"> </span><span class="s">"Drive/Speeds"</span><span class="p">,</span><span class="w"> </span><span class="n">speeds</span><span class="p">);</span><span class="w">   </span><span class="c1">// a ChassisSpeeds</span>
+</pre></div>
+</div>
+<p>It takes <code class="docutils literal notranslate"><span class="pre">Translation2d</span></code>, <code class="docutils literal notranslate"><span class="pre">Rotation2d</span></code>, <code class="docutils literal notranslate"><span class="pre">Pose2d</span></code>, <code class="docutils literal notranslate"><span class="pre">Twist2d</span></code>, <code class="docutils literal notranslate"><span class="pre">ChassisSpeeds</span></code>,
+<code class="docutils literal notranslate"><span class="pre">MecanumDriveWheelSpeeds</span></code>, <code class="docutils literal notranslate"><span class="pre">Translation3d</span></code>, <code class="docutils literal notranslate"><span class="pre">Quaternion</span></code>, <code class="docutils literal notranslate"><span class="pre">Rotation3d</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Pose3d</span></code>. Nothing is converted: each is already in the units and layout of the
+struct of the same name, and is written straight through. A <code class="docutils literal notranslate"><span class="pre">null</span></code> is skipped.
+WPILib’s geometry is <code class="docutils literal notranslate"><span class="pre">compileOnly</span></code>, so your project brings its own.</p>
+</section>
 </section>
 <section id="only-changes-are-recorded">
 <h2>Only changes are recorded<a class="headerlink" href="#only-changes-are-recorded" title="Link to this heading">¶</a></h2>
@@ -424,6 +441,32 @@ ignored and a one-time note naming the key appears in <code class="docutils lite
 <h2>Flushing<a class="headerlink" href="#flushing" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">endLoop()</span></code> writes to storage about once a second. Call it once a loop. If the
 robot loses power, the last second or so is lost; <code class="docutils literal notranslate"><span class="pre">close()</span></code> finishes cleanly.</p>
+</section>
+<section id="panels-as-well">
+<h2>Panels as well<a class="headerlink" href="#panels-as-well" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">PanelsMirror</span></code>, in <code class="docutils literal notranslate"><span class="pre">corbelsflightlog-ftc</span></code>, sends each value to the Panels
+dashboard and to the log under the same name:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">io.github.mikestitt.corbelsflightlog.ftc.PanelsMirror</span><span class="p">;</span>
+
+<span class="kd">private</span><span class="w"> </span><span class="n">PanelsMirror</span><span class="w"> </span><span class="n">out</span><span class="p">;</span>
+
+<span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">start</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FtcFlightLog</span><span class="p">.</span><span class="na">open</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+<span class="w">    </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PanelsMirror</span><span class="p">(</span><span class="n">log</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">loop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">out</span><span class="p">.</span><span class="na">data</span><span class="p">(</span><span class="s">"shooter/rpm"</span><span class="p">,</span><span class="w"> </span><span class="n">rpm</span><span class="p">);</span>
+<span class="w">    </span><span class="n">out</span><span class="p">.</span><span class="na">data</span><span class="p">(</span><span class="s">"intake/hasSample"</span><span class="p">,</span><span class="w"> </span><span class="n">hasSample</span><span class="p">);</span>
+<span class="w">    </span><span class="n">out</span><span class="p">.</span><span class="na">update</span><span class="p">();</span><span class="w">          </span><span class="c1">// in place of log.endLoop()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">data</span></code> takes a <code class="docutils literal notranslate"><span class="pre">double</span></code>, a <code class="docutils literal notranslate"><span class="pre">long</span></code> or <code class="docutils literal notranslate"><span class="pre">int</span></code>, a <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, a <code class="docutils literal notranslate"><span class="pre">String</span></code> or an
+<code class="docutils literal notranslate"><span class="pre">enum</span></code>, which is written as its name. Panels gets every call, because it
+rebuilds its telemetry each frame; the file still gets only the values that
+changed. Panels’ graph plots numbers only. <code class="docutils literal notranslate"><span class="pre">update()</span></code> flushes both, once a
+loop. <code class="docutils literal notranslate"><span class="pre">out.panels()</span></code> is Panels’ own telemetry, for lines the log should not
+get.</p>
 </section>
 </section>
 
@@ -491,11 +534,13 @@ robot loses power, the last second or so is lost; <code class="docutils literal 
 </li>
 <li><a class="reference internal" href="#geometry">Geometry</a><ul>
 <li><a class="reference internal" href="#from-the-ftc-sdk">From the FTC SDK</a></li>
+<li><a class="reference internal" href="#from-wpilib">From WPILib</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#only-changes-are-recorded">Only changes are recorded</a></li>
 <li><a class="reference internal" href="#one-type-per-key">One type per key</a></li>
 <li><a class="reference internal" href="#flushing">Flushing</a></li>
+<li><a class="reference internal" href="#panels-as-well">Panels as well</a></li>
 </ul>
 </li>
 </ul>

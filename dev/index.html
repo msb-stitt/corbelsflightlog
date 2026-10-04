@@ -196,6 +196,7 @@
 <li class="toctree-l1"><a class="reference internal" href="frames.html">Frames</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pedro.html">Pedro Pathing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="viewing.html">Viewing a log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networktables.html">NetworkTables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="format.html">The file format</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 </ul>
@@ -252,8 +253,23 @@ recorded only when it changes:</p>
 <span class="n">FlightLog</span><span class="p">.</span><span class="na">event</span><span class="p">(</span><span class="s">"kicker fired"</span><span class="p">);</span><span class="w">           </span><span class="c1">// one-off, with its exact time</span>
 </pre></div>
 </div>
-<section id="three-parts-taken-separately">
-<h2>Three parts, taken separately<a class="headerlink" href="#three-parts-taken-separately" title="Link to this heading">¶</a></h2>
+<section id="what-it-does">
+<h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Writes WPILOG files on the robot.</strong> Each value is timestamped and written
+only when it changes, one file per run, and the files download from the
+robot’s own web page. See <a class="reference internal" href="usage.html"><span class="std std-doc">Logging values</span></a> and
+<a class="reference internal" href="viewing.html"><span class="std std-doc">Viewing a log</span></a>.</p></li>
+<li><p><strong>Serves the same values live, for practice.</strong> A NetworkTables 4 server on
+the robot lets AdvantageScope watch as the robot runs. See
+<a class="reference internal" href="networktables.html"><span class="std std-doc">NetworkTables</span></a>.</p></li>
+<li><p><strong>Takes values in the types you already have.</strong> Pedro Pathing’s follower, the
+FTC SDK’s poses and IMU angles, and WPILib’s own geometry are converted or
+written straight through, and Panels can show each value as it is logged.</p></li>
+</ul>
+</section>
+<section id="four-modules-taken-separately">
+<h2>Four modules, taken separately<a class="headerlink" href="#four-modules-taken-separately" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -265,19 +281,19 @@ recorded only when it changes:</p>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">corbelsflightlog-core</span></code></p></td>
 <td><p>nothing</p></td>
-<td><p>The WPILOG writer and the logger. Any Java project.</p></td>
+<td><p>The WPILOG writer, the logger and the NetworkTables 4 server. Any Java project.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">corbelsflightlog-pedro</span></code></p></td>
 <td><p>Pedro Pathing</p></td>
-<td><p>The follower’s pose, path, aim point and debug data</p></td>
+<td><p>The follower’s pose, path, aim point and debug data: <a class="reference internal" href="pedro.html"><span class="std std-doc">Pedro Pathing</span></a></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">corbelsflightlog-ftc</span></code></p></td>
 <td><p>FTC SDK, Panels</p></td>
-<td><p>Logging to the Control Hub; mirroring values to Panels; SDK geometry</p></td>
+<td><p>Logging to the Control Hub, the download page, <code class="docutils literal notranslate"><span class="pre">openLive</span></code>, the SDK’s geometry, and mirroring to Panels</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">corbelsflightlog-wpilib</span></code></p></td>
 <td><p>WPILib geometry</p></td>
-<td><p>Logging WPILib’s own <code class="docutils literal notranslate"><span class="pre">Pose2d</span></code>, <code class="docutils literal notranslate"><span class="pre">Pose3d</span></code>, <code class="docutils literal notranslate"><span class="pre">ChassisSpeeds</span></code>…</p></td>
+<td><p>Logging WPILib’s own <code class="docutils literal notranslate"><span class="pre">Pose2d</span></code>, <code class="docutils literal notranslate"><span class="pre">Pose3d</span></code>, <code class="docutils literal notranslate"><span class="pre">ChassisSpeeds</span></code> and the rest: <em>From WPILib</em> in <a class="reference internal" href="usage.html"><span class="std std-doc">Logging values</span></a></p></td>
 </tr>
 </tbody>
 </table>
@@ -297,6 +313,7 @@ recorded only when it changes:</p>
 <li class="toctree-l2"><a class="reference internal" href="usage.html#only-changes-are-recorded">Only changes are recorded</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage.html#one-type-per-key">One type per key</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage.html#flushing">Flushing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#panels-as-well">Panels as well</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="frames.html">Frames</a><ul>
@@ -323,6 +340,15 @@ recorded only when it changes:</p>
 <li class="toctree-l2"><a class="reference internal" href="viewing.html#what-it-costs">What it costs</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="networktables.html">NetworkTables</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="networktables.html#turning-it-on">Turning it on</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networktables.html#connecting-advantagescope">Connecting AdvantageScope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networktables.html#the-server">The server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networktables.html#off-the-robot">Off the robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networktables.html#what-it-leaves-out">What it leaves out</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networktables.html#tested-by">Tested by</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="format.html">The file format</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="format.html#poses">Poses</a></li>
 </ul>
@@ -340,7 +366,9 @@ recorded only when it changes:</p>
 <h2>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h2>
 <p>Javadoc, built by Gradle and published beside these pages with each version:</p>
 <p><a href="javadoc/core/index.html">corbelsflightlog-core</a> ·
-<a href="javadoc/pedro/index.html">corbelsflightlog-pedro</a></p>
+<a href="javadoc/pedro/index.html">corbelsflightlog-pedro</a> ·
+<a href="javadoc/ftc/index.html">corbelsflightlog-ftc</a> ·
+<a href="javadoc/wpilib/index.html">corbelsflightlog-wpilib</a></p>
 <p>(Those links work on the published site; Gradle copies the Javadoc in when the
 site is built, so they are dead in a local <code class="docutils literal notranslate"><span class="pre">sphinx</span></code> build.)</p>
 </section>
@@ -400,7 +428,8 @@ and this library is the second one.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">corbelsflightlog</a><ul>
-<li><a class="reference internal" href="#three-parts-taken-separately">Three parts, taken separately</a></li>
+<li><a class="reference internal" href="#what-it-does">What it does</a></li>
+<li><a class="reference internal" href="#four-modules-taken-separately">Four modules, taken separately</a></li>
 <li><a class="reference internal" href="#api-reference">API reference</a></li>
 <li><a class="reference internal" href="#why-it-exists">Why it exists</a></li>
 </ul>

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="The file format" href="format.html"><link rel="prev" title="Pedro Pathing" href="pedro.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="NetworkTables" href="networktables.html"><link rel="prev" title="Pedro Pathing" href="pedro.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>Viewing a log - corbelsflightlog dev</title>
@@ -196,6 +196,7 @@
 <li class="toctree-l1"><a class="reference internal" href="frames.html">Frames</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pedro.html">Pedro Pathing</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Viewing a log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networktables.html">NetworkTables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="format.html">The file format</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 </ul>
@@ -264,21 +265,8 @@ folder is in use. To log somewhere else entirely – a USB stick, say – call
 </section>
 <section id="watching-live">
 <h2>Watching live<a class="headerlink" href="#watching-live" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">FtcFlightLog.openLive(this)</span></code> opens a log as <code class="docutils literal notranslate"><span class="pre">open</span></code> does and also sends every
-value it records to AdvantageScope as it is recorded, over NetworkTables 4. In
-AdvantageScope, set <strong>Robot Address</strong> to <code class="docutils literal notranslate"><span class="pre">192.168.43.1</span></code> under <strong>AdvantageScope &gt;
-Settings…</strong>, then choose <strong>File &gt; Connect to Robot &gt; NetworkTables 4</strong>; the
-values appear under the same names as in the file.</p>
-<p>The server is <code class="docutils literal notranslate"><span class="pre">Nt4Server</span></code>, in <code class="docutils literal notranslate"><span class="pre">corbelsflightlog-core</span></code>: plain Java with no
-libraries, on port 5810. It starts on the first <code class="docutils literal notranslate"><span class="pre">openLive</span></code> and runs until the
-Robot Controller app stops. A program off the robot, such as a simulator, uses
-<code class="docutils literal notranslate"><span class="pre">Nt4Server.shared()</span></code> and <code class="docutils literal notranslate"><span class="pre">FlightLog.mirrorTo(server)</span></code> directly.</p>
-<p><strong>For practice only.</strong> FTC rule R704 forbids third-party telemetry over Wi-Fi at
-competitions, so a competition OpMode opens its log with <code class="docutils literal notranslate"><span class="pre">open</span></code>, which starts no
-server.</p>
-<p>What the server leaves out of NetworkTables 4: the <code class="docutils literal notranslate"><span class="pre">all</span></code> subscribe option (each
-send carries the latest value), meta-topics such as <code class="docutils literal notranslate"><span class="pre">$clients</span></code>, saving
-<code class="docutils literal notranslate"><span class="pre">persistent</span></code> topics, TLS, and NetworkTables 3.</p>
+<p>To watch the values while the robot runs, rather than afterwards, see
+<a class="reference internal" href="networktables.html"><span class="std std-doc">NetworkTables</span></a>.</p>
 </section>
 <section id="housekeeping">
 <h2>Housekeeping<a class="headerlink" href="#housekeeping" title="Link to this heading">¶</a></h2>
@@ -305,12 +293,12 @@ than accumulating a frame.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="format.html">
+          <a class="next-page" href="networktables.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">The file format</div>
+                <div class="title">NetworkTables</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
