@@ -55,3 +55,17 @@ afterEvaluate {
         }
     }
 }
+
+// The API reference. The Android plugin makes no Javadoc task of its own, so
+// this one is the plain Java one, given Android's classes and the compile
+// classpath to resolve against.
+tasks.register('javadoc', Javadoc) {
+    def variant = android.libraryVariants.find { it.name == 'release' }
+    source = android.sourceSets.main.java.srcDirs
+    classpath = files(android.bootClasspath) + variant.javaCompileProvider.get().classpath
+    destinationDir = layout.buildDirectory.dir('docs/javadoc').get().asFile
+    options.links 'https://docs.oracle.com/en/java/javase/17/docs/api/'
+    // The site puts each module's pages side by side under javadoc/.
+    options.linksOffline '../core/', project(':core').layout.buildDirectory.dir('docs/javadoc').get().asFile.path
+    dependsOn ':core:javadoc'
+}

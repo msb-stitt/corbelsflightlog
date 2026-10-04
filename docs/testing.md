@@ -282,7 +282,7 @@ asks, stop it and start it again. Then pull that run's log and check it:
 
 The Driver Station shows `NetworkTables on, port 5810`, the log's name, and the
 step counting up. A pass ends `N passed, 0 failed`. To watch the values in
-AdvantageScope instead, see *Watching live* in [Viewing a log](viewing.md).
+AdvantageScope instead, see [NetworkTables](networktables.md).
 
 ### What to bring back
 
