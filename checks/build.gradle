@@ -19,15 +19,70 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     sourceSets {
-        // opmodes/ stays where a team copies it from.
+        // opmodes/ stays where a team copies it from; host/ runs on the
+        // computer the robot is plugged into.
         main.java.srcDirs = ['opmodes']
+        test.java.srcDirs = ['host']
     }
     testOptions {
         unitTests.returnDefaultValues = true
     }
 }
 
+// WPILib's NetworkTables client, so the checks read the robot's server the
+// way WPILib reads it. 2025.3.2: the newest version whose -jni natives are
+// published. One natives jar per platform; only osxuniversal has been run.
+def ntcoreVersion = '2025.3.2'
+def wpilibClassifier = {
+    String os = System.getProperty('os.name').toLowerCase()
+    String arch = System.getProperty('os.arch').toLowerCase()
+    boolean arm = arch.contains('aarch64') || arch.contains('arm64')
+    if (os.contains('mac')) return 'osxuniversal'
+    if (os.contains('win')) return arm ? 'windowsarm64' : 'windowsx86-64'
+    return arm ? 'linuxarm64' : 'linuxx86-64'
+}()
+// LWJGL only for its dlopen binding, which NtNatives needs on Linux.
+def lwjglVersion = '3.4.3'
+def lwjglNatives = {
+    String os = System.getProperty('os.name').toLowerCase()
+    String arch = System.getProperty('os.arch').toLowerCase()
+    boolean arm = arch.contains('aarch64') || arch.contains('arm64')
+    if (os.contains('mac')) return arm ? 'natives-macos-arm64' : 'natives-macos'
+    if (os.contains('win')) return arm ? 'natives-windows-arm64' : 'natives-windows'
+    return arm ? 'natives-linux-arm64' : 'natives-linux'
+}()
+
 dependencies {
     implementation project(':ftc')
     compileOnly "org.firstinspires.ftc:RobotCore:${ftcSdkVersion}"
+
+    testImplementation "org.firstinspires.ftc:RobotCore:${ftcSdkVersion}"
+    testImplementation "edu.wpi.first.ntcore:ntcore-java:$ntcoreVersion"
+    testImplementation "edu.wpi.first.wpiutil:wpiutil-java:$ntcoreVersion"
+    testImplementation "edu.wpi.first.ntcore:ntcore-jni:$ntcoreVersion:$wpilibClassifier"
+    testImplementation "edu.wpi.first.wpiutil:wpiutil-jni:$ntcoreVersion:$wpilibClassifier"
+    testImplementation "org.lwjgl:lwjgl:$lwjglVersion"
+    testRuntimeOnly "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
+}
+
+// The two programs in host/. The classpath is the unit tests', asked of the
+// Android test task rather than rebuilt, so the two cannot disagree.
+afterEvaluate {
+    tasks.register('ntApiCheck', JavaExec) {
+        group = 'verification'
+        description = 'Check Log 9 over NetworkTables 4 on 127.0.0.1:5810 while a person runs it.'
+        dependsOn 'compileDebugUnitTestJavaWithJavac'
+        mainClass = 'io.github.mikestitt.corbelsflightlog.checks.NtApiCheck'
+        classpath = tasks.named('testDebugUnitTest').get().classpath
+        workingDir = rootProject.projectDir
+    }
+    tasks.register('usbGate', JavaExec) {
+        group = 'verification'
+        description = 'Run the checks that need a Control Hub on USB and no person.'
+        dependsOn 'compileDebugUnitTestJavaWithJavac'
+        mainClass = 'io.github.mikestitt.corbelsflightlog.checks.UsbGate'
+        classpath = tasks.named('testDebugUnitTest').get().classpath
+        systemProperty 'adb', new File(android.sdkDirectory, 'platform-tools/adb').path
+        workingDir = rootProject.projectDir
+    }
 }
