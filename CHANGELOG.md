@@ -12,6 +12,13 @@ the release workflow refuses a tag that doesn't.
 - `corbelsflightlog-ftc`: `FtcFlightLog.openLive(opMode)`, which opens a log and
   serves it live to AdvantageScope on port 5810. For practice: FTC rule R704
   forbids it at competitions.
+- `corbelsflightlog-core`: `FlightLog.fieldPose(x, y, heading)`, a Pedro pose in
+  AdvantageScope's field frame, converted as the log converts it, for drawing
+  the same robot somewhere the log does not write.
+- The robot checks in `checks/` are now built by `./gradlew build`, though not
+  published, and `./gradlew :checks:usbGate` runs the NetworkTables check on a
+  Control Hub over USB with nobody at it. `docs/testing.md` sorts every test by
+  where it runs.
 
 ## 0.1.0
 
