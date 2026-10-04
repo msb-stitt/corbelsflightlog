@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * Check 4: old logs are deleted once the folder passes its budget.
  *
- * <p>Sets the budget to 1 MB instead of the usual 10 GiB, then writes hard
+ * <p>Sets the budget to 1 MB instead of the usual 2 GiB, then writes hard
  * enough to pass it. Run it several times: the file count should stop growing
  * and the oldest should disappear, while anything that is not a .wpilog is left
  * alone.

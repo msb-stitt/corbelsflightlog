@@ -14,11 +14,11 @@ costs one record rather than thousands, and a file survives the match for
 review afterwards -- unlike a dashboard, which samples and forgets.
 
 For practice, `FtcFlightLog.openLive(this)` also sends the same values live to
-AdvantageScope over NetworkTables 4; see [Viewing a log](docs/viewing.md).
+AdvantageScope over NetworkTables 4; see [NetworkTables](docs/networktables.md).
 
 | Module | Depends on | For |
 |---|---|---|
-| `corbelsflightlog-core` | nothing | The WPILOG writer and logger |
+| `corbelsflightlog-core` | nothing | The WPILOG writer, logger and NetworkTables 4 server |
 | `corbelsflightlog-pedro` | Pedro Pathing | Pose, path, aim point and Pedro's debug data |
 | `corbelsflightlog-ftc` | FTC SDK, Panels | The Control Hub's storage; mirroring to Panels |
 | `corbelsflightlog-wpilib` | WPILib geometry | WPILib's own `Pose2d`, `Pose3d`, `ChassisSpeeds` |

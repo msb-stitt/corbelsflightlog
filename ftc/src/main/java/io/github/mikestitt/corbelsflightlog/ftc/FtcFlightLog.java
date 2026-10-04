@@ -36,11 +36,12 @@ import java.io.IOException;
  * Calling {@code close()} yourself still works and is still worth doing: it
  * flushes immediately rather than at the end of the OpMode.
  *
- * <p><b>Where the files go.</b> {@link #logDirectory()} is a {@code logs}
- * folder inside the Robot Controller's own FIRST folder -- the SDK's
- * {@code AppUtil.ROOT_FOLDER}, which is internal storage on a Control Hub, not
- * a removable card. If that folder can't be used, this falls back to the app's
- * private files directory, which always exists.
+ * <p><b>Where the files go.</b> {@link #logDirectory()} is a
+ * {@code corbelsflightlog} folder at the top of the Robot Controller's storage
+ * -- the SDK's {@code AppUtil.ROOT_FOLDER}, so {@code /sdcard/corbelsflightlog},
+ * which is internal storage on a Control Hub, not a removable card. If that
+ * folder can't be used, this falls back to a {@code corbelsflightlog} folder
+ * in the app's private files directory, which always exists.
  *
  * <p><b>Getting them off the robot.</b> With the laptop on the robot's Wi-Fi,
  * open <a href="http://192.168.43.1:8080/corbelsflightlog">
@@ -79,8 +80,9 @@ public final class FtcFlightLog implements OpModeManagerNotifier.Notifications {
     }
 
     /**
-     * Where log files go: {@code <FIRST>/logs} when that is usable, otherwise
-     * the app's own files directory. Never returns null, never throws.
+     * Where log files go: {@code /sdcard/corbelsflightlog} when that is usable,
+     * otherwise a folder of that name in the app's own files directory. Never
+     * returns null, never throws.
      */
     public static File logDirectory() {
         File chosen = override;
@@ -103,7 +105,7 @@ public final class FtcFlightLog implements OpModeManagerNotifier.Notifications {
     }
 
     /**
-     * Picks the log folder given the Robot Controller's FIRST folder and the
+     * Picks the log folder given the Robot Controller's storage folder and the
      * app's own files folder, either of which may be null or unusable. Split
      * out from {@link #logDirectory} so it can be tested off a robot.
      */

@@ -31,7 +31,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r docs/requirements.txt
-      - run: ./gradlew :core:javadoc :pedro:javadoc
+      - run: ./gradlew :core:javadoc :pedro:javadoc :wpilib:javadoc :ftc:javadoc
       - run: python docs/build_site.py --version dev
       - uses: peaceiris/actions-gh-pages@v4
         with:

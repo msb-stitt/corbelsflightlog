@@ -59,7 +59,7 @@ jobs:
       - run: pip install -r docs/requirements.txt
       - name: Build the docs and the Javadoc
         run: |
-          ./gradlew :core:javadoc :pedro:javadoc :wpilib:javadoc
+          ./gradlew :core:javadoc :pedro:javadoc :wpilib:javadoc :ftc:javadoc
           python docs/build_site.py --version "$GITHUB_REF_NAME"
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

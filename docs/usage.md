@@ -107,6 +107,24 @@ are composed here in the SDK's order and axes and written as a quaternion.
 The SDK notes that a `Pose3D`'s axis mapping is defined by whatever produced
 it, so check the docs of the API you got it from.
 
+### From WPILib
+
+`corbelsflightlog-wpilib` writes WPILib's own geometry, for code that already
+holds it:
+
+```java
+import io.github.mikestitt.corbelsflightlog.wpilib.WpiGeometry;
+
+WpiGeometry.recordOutput(log, "Drive/Pose", pose);       // a Pose2d
+WpiGeometry.recordOutput(log, "Drive/Speeds", speeds);   // a ChassisSpeeds
+```
+
+It takes `Translation2d`, `Rotation2d`, `Pose2d`, `Twist2d`, `ChassisSpeeds`,
+`MecanumDriveWheelSpeeds`, `Translation3d`, `Quaternion`, `Rotation3d` and
+`Pose3d`. Nothing is converted: each is already in the units and layout of the
+struct of the same name, and is written straight through. A `null` is skipped.
+WPILib's geometry is `compileOnly`, so your project brings its own.
+
 ## Only changes are recorded
 
 A value is written when it differs from the last one under that key.
@@ -126,3 +144,31 @@ ignored and a one-time note naming the key appears in `/Events`.
 
 `endLoop()` writes to storage about once a second. Call it once a loop. If the
 robot loses power, the last second or so is lost; `close()` finishes cleanly.
+
+## Panels as well
+
+`PanelsMirror`, in `corbelsflightlog-ftc`, sends each value to the Panels
+dashboard and to the log under the same name:
+
+```java
+import io.github.mikestitt.corbelsflightlog.ftc.PanelsMirror;
+
+private PanelsMirror out;
+
+@Override public void start() {
+    log = FtcFlightLog.open(this);
+    out = new PanelsMirror(log);
+}
+@Override public void loop() {
+    out.data("shooter/rpm", rpm);
+    out.data("intake/hasSample", hasSample);
+    out.update();          // in place of log.endLoop()
+}
+```
+
+`data` takes a `double`, a `long` or `int`, a `boolean`, a `String` or an
+`enum`, which is written as its name. Panels gets every call, because it
+rebuilds its telemetry each frame; the file still gets only the values that
+changed. Panels' graph plots numbers only. `update()` flushes both, once a
+loop. `out.panels()` is Panels' own telemetry, for lines the log should not
+get.
