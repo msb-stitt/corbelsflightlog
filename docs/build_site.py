@@ -27,7 +27,7 @@ import urllib.request
 DOCS = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(DOCS)
 SITE = os.path.join(DOCS, "_site")
-MODULES = ("core", "pedro")
+MODULES = ("core", "pedro", "wpilib", "ftc")
 
 
 def published_versions(repo):
