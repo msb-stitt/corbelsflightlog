@@ -5,23 +5,17 @@ checklist for running them. They test the library -- where files land, whether a
 crashed OpMode still closes its log, whether the disk budget prunes, whether the
 download page refuses a path-traversal query -- not any particular robot.
 
-## Not wired into the build yet
+## Built here, not published
 
-These are source files, deliberately outside `settings.gradle`. Nothing compiles
-them, and CI does not see them.
+`./gradlew build` compiles `opmodes/` as the `:checks` module whenever it builds
+`:ftc`, so CI sees them. They are not published: OpModes are found by
+annotation scanning, so a published copy would put the whole `LogCheck` group
+on every Driver Station that depended on it.
 
-They were written and run inside a team's own TeamCode module, where they
-compiled against the FTC SDK and this library together. Making them build here
-means deciding how:
-
-- a separate opt-in artifact, say `corbelsflightlog-ftc-checks`, that a team
-  adds for a session and removes afterwards -- OpModes are found by annotation
-  scanning, so anything published as part of `-ftc` would put the whole
-  `LogCheck` group on every user's Driver Station;
-- or left as source to copy into a TeamCode module, which is how they were used.
-
-**Future work.** Until then, copy `opmodes/` into your TeamCode module, change
-the package declaration to match, and follow `CHECKLIST.md`.
+To run them, copy `opmodes/` into your TeamCode module and change the package
+declaration to match. `host/` holds the programs that run on the computer the
+robot is plugged into: `:checks:usbGate`, and `:checks:ntApiCheck`.
+[`docs/testing.md`](../docs/testing.md) has the steps for each.
 
 ## What they cover
 
@@ -34,6 +28,7 @@ the package declaration to match, and follow `CHECKLIST.md`.
 | Log 5: geometry | the struct types on the 2D and 3D field; confirms `fieldQuarterTurns` |
 | Log 6: where are the logs? | writes nothing; folder, writability, free space, budget |
 | Log 8: 3 Hz flush beat | makes storage writes visible in the loop-time spectrum |
+| Log 9: NetworkTables API | every type on the NetworkTables server, read back by WPILib's client; run by `:checks:usbGate` |
 
 None of them needs a drivetrain, or any hardware: they run on any configuration.
 

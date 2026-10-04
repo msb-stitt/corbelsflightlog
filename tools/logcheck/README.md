@@ -8,6 +8,7 @@ spec:
 | `test_files_are_byte_for_byte_identical` | WPILib's native C++ log writer, given the same records |
 | `test_wpilib_reads_every_record` | WPILib's native log reader |
 | `test_schema_entries_match_wpilib_exactly` | WPILib's `addStructSchema` for `Pose2d` |
+| `test_schema_dependencies_come_before_the_types_that_use_them` | No WPILib code: each schema comes before the schemas that use it, `Pose2d`'s after `Translation2d`'s and `Rotation2d`'s |
 | `test_poses_decode_with_wpilib_to_the_expected_field_pose` | WPILib's struct decoder and `wpimath` geometry |
 | `test_pose_bytes_reencode_identically_with_wpilib` | WPILib's struct encoder |
 | `test_pose_array_matches_the_single_poses` | WPILib's struct-array decoder |

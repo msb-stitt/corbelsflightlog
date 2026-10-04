@@ -63,7 +63,11 @@ match WPILib's native writer exactly.
 ./gradlew build
 pip install -r tools/logcheck/requirements.txt
 python -m unittest discover -s tools/logcheck -v
+./gradlew :checks:usbGate     # a Control Hub on USB, running checks/opmodes
 ```
+
+[Testing](docs/testing.md) says what each test covers, which need a Control
+Hub, and the checks run by a person at the robot.
 
 ## Licence
 
