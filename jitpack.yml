@@ -4,21 +4,13 @@
 #   * for Gradle projects it runs `./gradlew install`, which does not exist
 #     with the maven-publish plugin.
 #
-# :ftc is an Android library, so it needs an Android SDK. JitPack provides one,
-# and this project's own CI builds :ftc on a plain ubuntu runner with nothing
-# beyond android.useAndroidX=true -- but whether JitPack's SDK, licences and AGP
-# version line up is UNVERIFIED. It is therefore attempted in its own step,
-# after the three plain Java modules have already been published, and is allowed
-# to fail: a team that cannot get -ftc from JitPack can still get core, pedro and
-# wpilib, and build -ftc locally with ./gradlew publishToMavenLocal.
-#
-# Check the build log after tagging:
-#   https://jitpack.io/com/github/MikeStitt/corbelsflightlog/<tag>/build.log
-# If :ftc published, drop the `|| true` and say so here. If it failed, the log
-# says why.
+# :ftc is an Android library, built with JitPack's own Android SDK in a step
+# of its own. It published for v0.2.1, so it is no longer allowed to fail: a
+# tag whose :ftc does not build fails on JitPack. The build log says why:
+#   https://jitpack.io/com/github/msb-stitt/corbelsflightlog/<tag>/build.log
 jdk:
   - openjdk17
 
 install:
   - ./gradlew :core:publishToMavenLocal :pedro:publishToMavenLocal :wpilib:publishToMavenLocal
-  - ./gradlew :ftc:publishToMavenLocal || true
+  - ./gradlew :ftc:publishToMavenLocal

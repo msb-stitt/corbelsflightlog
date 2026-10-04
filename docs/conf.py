@@ -25,7 +25,7 @@ html_title = f"corbelsflightlog {version}"
 html_static_path = ["_static"]
 html_js_files = ["versions.js"]        # the version switcher
 html_theme_options = {
-    "source_repository": "https://github.com/MikeStitt/corbelsflightlog/",
+    "source_repository": "https://github.com/msb-stitt/corbelsflightlog/",
     "source_branch": "main",
     "source_directory": "docs/",
 }

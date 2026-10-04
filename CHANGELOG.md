@@ -6,6 +6,8 @@ the release workflow refuses a tag that doesn't.
 
 ## Unreleased
 
+## 0.3.0
+
 - `corbelsflightlog-core`: `Nt4Server`, a NetworkTables 4 server in plain Java with
   no libraries, and `FlightLog.mirrorTo(server)`, which sends every recorded value
   to it live.
@@ -19,6 +21,21 @@ the release workflow refuses a tag that doesn't.
   published, and `./gradlew :checks:usbGate` runs the NetworkTables check on a
   Control Hub over USB with nobody at it. `docs/testing.md` sorts every test by
   where it runs.
+
+## 0.2.1
+
+- JitPack builds `corbelsflightlog-ftc`, so a team can depend on it like the
+  other three modules instead of building it with `publishToMavenLocal`.
+
+## 0.2.0
+
+- `corbelsflightlog-core`: `FlightLog.pose(key, x, y, height, heading)`, a Pedro
+  pose drawn on AdvantageScope's 3D field, turned by `fieldQuarterTurns` as the
+  2D pose is; and the Frames page. `fieldQuarterTurns = 1` is checked for the
+  2026-2027 field.
+- `corbelsflightlog-core`: the disk budget's default is 2 GiB, down from 10 GiB.
+- `corbelsflightlog-ftc`: logs go in a `corbelsflightlog` folder, not `logs`.
+- The robot checks, in `checks/`, moved here from the robot code.
 
 ## 0.1.0
 

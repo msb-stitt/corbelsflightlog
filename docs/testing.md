@@ -130,13 +130,13 @@ Run **Log 6: where are the logs?**
 It writes nothing. It reports the folder, whether it exists and is writable,
 free space, how many logs are there, and the budget.
 
-- **Expected:** a `logs` folder inside the SDK's FIRST folder, usually
-  `/sdcard/FIRST/logs`. On a Control Hub that is **internal** storage; the name
-  is historical and no card is involved.
+- **Expected:** a `corbelsflightlog` folder in the Robot Controller's storage,
+  `/sdcard/corbelsflightlog`. On a Control Hub that is **internal** storage; the
+  name is historical and no card is involved.
 - **Fallback:** if it shows a path under the app's own storage
-  (`/data/user/0/com.qualcomm.ftcrobotcontroller/files/logs` or similar), the
-  FIRST folder wasn't usable. Logging still works, and the download page still
-  serves the files, but `adb pull` won't reach them.
+  (`/data/user/0/com.qualcomm.ftcrobotcontroller/files/corbelsflightlog` or
+  similar), the preferred folder wasn't usable. Logging still works, and the
+  download page still serves the files, but `adb pull` won't reach them.
 - **Writable: false** — stop here; nothing below can pass.
 
 ### `FlightLog` recording: Log 1
@@ -203,7 +203,7 @@ while it runs, and restores it on stop.
 - Drop a `notes.txt` into the log folder first if you want to confirm that
   non-log files are never deleted.
 
-After the last run, **Log 6** should show the budget back at 10240 MB.
+After the last run, **Log 6** should show the budget back at 2048 MB.
 
 ### Structs and the field frame: Log 5
 

@@ -29,19 +29,23 @@ AdvantageScope over NetworkTables 4; see [Viewing a log](docs/viewing.md).
 repositories { maven { url = "https://jitpack.io" } }
 
 dependencies {
-    implementation 'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-core:v0.1.0'
-    implementation 'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-pedro:v0.1.0'  // optional
-    implementation 'com.github.MikeStitt.corbelsflightlog:corbelsflightlog-ftc:v0.1.0'    // optional
+    implementation 'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-core:VERSION'
+    implementation 'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-pedro:VERSION'  // optional
+    implementation 'com.github.msb-stitt.corbelsflightlog:corbelsflightlog-ftc:VERSION'    // optional
 }
 ```
+
+`VERSION` is a release tag, such as `v1.2.3`;
+[the releases page](https://github.com/msb-stitt/corbelsflightlog/releases)
+lists them, newest first.
 
 Pedro Pathing, the FTC SDK and Panels are `compileOnly`, so your project picks
 their versions.
 
 ## Documentation
 
-<https://mikestitt.github.io/corbelsflightlog/> -- one copy per release, plus the
-Javadoc.
+<https://msb-stitt.github.io/corbelsflightlog/> -- one copy per release, plus
+the Javadoc.
 
 ## Building
 
