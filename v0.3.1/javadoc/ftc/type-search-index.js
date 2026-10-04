@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"io.github.mikestitt.corbelsflightlog.ftc","l":"FtcFlightLog"},{"p":"io.github.mikestitt.corbelsflightlog.ftc","l":"FtcGeometry"},{"p":"io.github.mikestitt.corbelsflightlog.ftc","l":"PanelsMirror"}];updateSearchResults();
