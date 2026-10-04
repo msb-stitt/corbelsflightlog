@@ -1,6 +1,6 @@
 # On-robot checklist — corbelsflightlog
 
-Everything here needs a Control Hub. Nothing in it needs a drivetrain: the six
+Everything here needs a Control Hub. Nothing in it needs a drivetrain: the
 `LogCheck` OpModes run on any configuration.
 
 Work top to bottom. Each step says what a pass looks like and what to do if it
@@ -18,7 +18,7 @@ In the `corbelsflightlog` repo:
 
 That writes `corbelsflightlog-core`, `-ftc`, `-pedro` and `-wpilib` to `~/.m2`.
 The robot project's `build.dependencies.gradle` now has `mavenLocal()`, and
-`TeamCode/build.gradle` depends on the first three.
+`TeamCode/build.gradle` depends on `-core`, `-ftc` and `-pedro`.
 
 Then build and deploy the robot project as usual.
 
@@ -154,15 +154,15 @@ In AdvantageScope:
 - `Circle/Speeds`, `Circle/Wheels`, `Circle/Twist` in a **Table**.
 - `imu/Rotation` and `imu/Heading` if the IMU was there.
 
-**Two things are unverified and this is where we find out:**
+**Unverified, and this is where we find out:**
 
-1. **`fieldQuarterTurns`.** If the circle is rotated or mirrored relative to the
-   field image, set `FlightLog.fieldQuarterTurns` to 0, 1, 2 or 3 until it
-   matches. It only affects the display, and only for logs written afterwards.
-2. **The 3D axis mapping** from the SDK's yaw/pitch/roll. Tilt the hub by hand
-   with Log 5 running and watch `imu/Rotation` on the 3D field: pitch should
-   tip it nose-up, roll should tip it sideways. If those swap, the SDK's axis
-   convention for your IMU differs from what its docs describe.
+- **`fieldQuarterTurns`.** If the circle is rotated or mirrored relative to the
+  field image, set `FlightLog.fieldQuarterTurns` to 0, 1, 2 or 3 until it
+  matches. It only affects the display, and only for logs written afterwards.
+- **The 3D axis mapping** from the SDK's yaw/pitch/roll. Tilt the hub by hand
+  with Log 5 running and watch `imu/Rotation` on the 3D field: pitch should
+  tip it nose-up, roll should tip it sideways. If those swap, the SDK's axis
+  convention for your IMU differs from what its docs describe.
 
 ---
 
@@ -209,9 +209,9 @@ in the spectrum.
 
 ## What to bring back
 
-1. Step 1: present or absent, and the folder it named.
-2. Step 2: the folder, writable or not.
-3. Step 4: did the crashed run leave a readable log?
-4. Step 6: does `?file=../secret.wpilog` get refused?
-5. Step 8: which `fieldQuarterTurns` matched, and whether pitch/roll behaved.
-6. Step 9: typical `loop/ms` and the size of the once-a-second spike.
+- Step 1: present or absent, and the folder it named.
+- Step 2: the folder, writable or not.
+- Step 4: did the crashed run leave a readable log?
+- Step 6: does `?file=../secret.wpilog` get refused?
+- Step 8: which `fieldQuarterTurns` matched, and whether pitch/roll behaved.
+- Step 9: typical `loop/ms` and the size of the once-a-second spike.
