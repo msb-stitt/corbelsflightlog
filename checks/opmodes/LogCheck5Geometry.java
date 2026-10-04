@@ -27,6 +27,12 @@ public class LogCheck5Geometry extends OpMode {
     private long startNs;
 
     @Override
+    public void init() {
+        telemetry.addLine("Press start; the log opens then.");
+        telemetry.update();
+    }
+
+    @Override
     public void start() {
         log = FtcFlightLog.open(this);
         startNs = System.nanoTime();

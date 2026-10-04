@@ -28,6 +28,7 @@ def hasAndroidSdk = file('local.properties').exists() ||
         System.getenv('ANDROID_HOME') || System.getenv('ANDROID_SDK_ROOT')
 if (hasAndroidSdk) {
     include ':ftc'
+    include ':checks'
 } else {
-    logger.lifecycle('corbelsflightlog: no Android SDK found, skipping :ftc')
+    logger.lifecycle('corbelsflightlog: no Android SDK found, skipping :ftc and :checks')
 }

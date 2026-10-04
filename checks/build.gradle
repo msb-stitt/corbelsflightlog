@@ -1,0 +1,33 @@
+plugins {
+    id 'com.android.library' version '8.13.2'
+}
+
+description = 'The robot checks, compiled so CI sees them. Not published.'
+
+// Not published, by design: OpModes are found by annotation scanning, so a
+// published copy would put the LogCheck group on every Driver Station that
+// depends on it. A team copies opmodes/ into its TeamCode instead.
+android {
+    namespace = 'io.github.mikestitt.corbelsflightlog.checks'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 24
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        // opmodes/ stays where a team copies it from.
+        main.java.srcDirs = ['opmodes']
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+    implementation project(':ftc')
+    compileOnly "org.firstinspires.ftc:RobotCore:${ftcSdkVersion}"
+}
