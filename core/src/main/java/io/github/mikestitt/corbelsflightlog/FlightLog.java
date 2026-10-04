@@ -406,6 +406,38 @@ public final class FlightLog {
         }
     }
 
+    /**
+     * A Pedro pose in AdvantageScope's field frame, as
+     * {@code {x, y, headingRad}}.
+     *
+     * <p>Takes the same arguments as {@link #pose}: inches from a field corner
+     * and radians counter-clockwise. Returns metres from the centre of the
+     * field, turned by {@link #fieldQuarterTurns}, which is what this library
+     * writes for every converting call.
+     *
+     * <p>Here so that code drawing the same robot somewhere this library does
+     * not write -- over NetworkTables, say -- converts the way the log does
+     * instead of repeating the arithmetic. Repeating it is how a 3D pose once
+     * came out 90 degrees from the 2D one; see {@code PedroPose3dTest}.
+     */
+    public static double[] fieldPose(double xIn, double yIn, double headingRad) {
+        double x = (xIn - FIELD_CENTER_IN) * METERS_PER_INCH;
+        double y = (yIn - FIELD_CENTER_IN) * METERS_PER_INCH;
+        int turns = Math.floorMod(fieldQuarterTurns, 4);
+        double fx;
+        double fy;
+        switch (turns) {
+            case 1:  fx = -y; fy = x;  break;
+            case 2:  fx = -x; fy = -y; break;
+            case 3:  fx = y;  fy = -x; break;
+            default: fx = x;  fy = y;  break;
+        }
+        double heading = (headingRad + turns * Math.PI / 2) % (2 * Math.PI);
+        if (heading < 0) heading += 2 * Math.PI;
+        // + 0.0 turns -0.0 into 0.0
+        return new double[]{fx + 0.0, fy + 0.0, heading};
+    }
+
     /** Several strings as one value. */
     public void recordOutput(String key, String[] values) {
         if (writer == null || values == null) return;
@@ -753,22 +785,10 @@ public final class FlightLog {
     }
 
     private void encodePose(byte[] buf, int offset, double xIn, double yIn, double headingRad) {
-        double x = (xIn - FIELD_CENTER_IN) * METERS_PER_INCH;
-        double y = (yIn - FIELD_CENTER_IN) * METERS_PER_INCH;
-        int turns = Math.floorMod(fieldQuarterTurns, 4);
-        double fx;
-        double fy;
-        switch (turns) {
-            case 1:  fx = -y; fy = x;  break;
-            case 2:  fx = -x; fy = -y; break;
-            case 3:  fx = y;  fy = -x; break;
-            default: fx = x;  fy = y;  break;
-        }
-        double heading = (headingRad + turns * Math.PI / 2) % (2 * Math.PI);
-        if (heading < 0) heading += 2 * Math.PI;
-        putDouble(buf, offset, fx + 0.0);   // + 0.0 turns -0.0 into 0.0
-        putDouble(buf, offset + 8, fy + 0.0);
-        putDouble(buf, offset + 16, heading);
+        double[] p = fieldPose(xIn, yIn, headingRad);
+        putDouble(buf, offset, p[0]);
+        putDouble(buf, offset + 8, p[1]);
+        putDouble(buf, offset + 16, p[2]);
     }
 
     private static double readDouble(byte[] buf, int offset) {

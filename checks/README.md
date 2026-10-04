@@ -1,6 +1,6 @@
 # Robot checks
 
-Seven OpModes that exercise this library on a real Control Hub, and the
+The OpModes that exercise this library on a real Control Hub, and the
 checklist for running them. They test the library -- where files land, whether a
 crashed OpMode still closes its log, whether the disk budget prunes, whether the
 download page refuses a path-traversal query -- not any particular robot.
@@ -16,8 +16,8 @@ means deciding how:
 
 - a separate opt-in artifact, say `corbelsflightlog-ftc-checks`, that a team
   adds for a session and removes afterwards -- OpModes are found by annotation
-  scanning, so anything published as part of `-ftc` would put seven `LogCheck`
-  entries on every user's Driver Station;
+  scanning, so anything published as part of `-ftc` would put the whole
+  `LogCheck` group on every user's Driver Station;
 - or left as source to copy into a TeamCode module, which is how they were used.
 
 **Future work.** Until then, copy `opmodes/` into your TeamCode module, change
@@ -39,7 +39,7 @@ None of them needs a drivetrain, or any hardware: they run on any configuration.
 
 ## Status, September 2026
 
-All seven ran on a Control Hub and passed, which is what established that
+All of them ran on a Control Hub and passed, which is what established that
 `fieldQuarterTurns = 1` is correct for BIOBUZZ (2026-2027).
 
 The loop-cost figures from that session belong to that robot and that OpMode,
