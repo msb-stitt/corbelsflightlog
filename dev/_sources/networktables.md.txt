@@ -50,6 +50,18 @@ log.mirrorTo(Nt4Server.shared());
 `port()` gives. `server.set(name, type, value)` sends a value with no log
 behind it, and `log.mirrorTo(null)` stops a log sending.
 
+A simulator that runs faster than real time, or stops, gives the log and the
+server its own clock before opening them, in nanoseconds:
+
+```java
+FlightLog.useClock(sim::nanos);
+Nt4Server.useClock(sim::nanos);
+```
+
+Each log opened and each server started afterwards stamps its values with that
+clock. File names and the server's pings stay on the wall clock, and
+`useWallClock()` puts the wall clock back.
+
 ## What it leaves out
 
 The server leaves out these parts of NetworkTables 4: the `all` subscribe

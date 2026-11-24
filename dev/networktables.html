@@ -286,6 +286,15 @@ stops recording.</p>
 <code class="docutils literal notranslate"><span class="pre">Nt4Server.start(port)</span></code> starts another; port 0 picks a free one, which
 <code class="docutils literal notranslate"><span class="pre">port()</span></code> gives. <code class="docutils literal notranslate"><span class="pre">server.set(name,</span> <span class="pre">type,</span> <span class="pre">value)</span></code> sends a value with no log
 behind it, and <code class="docutils literal notranslate"><span class="pre">log.mirrorTo(null)</span></code> stops a log sending.</p>
+<p>A simulator that runs faster than real time, or stops, gives the log and the
+server its own clock before opening them, in nanoseconds:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">FlightLog</span><span class="p">.</span><span class="na">useClock</span><span class="p">(</span><span class="n">sim</span><span class="p">::</span><span class="n">nanos</span><span class="p">);</span>
+<span class="n">Nt4Server</span><span class="p">.</span><span class="na">useClock</span><span class="p">(</span><span class="n">sim</span><span class="p">::</span><span class="n">nanos</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Each log opened and each server started afterwards stamps its values with that
+clock. File names and the server’s pings stay on the wall clock, and
+<code class="docutils literal notranslate"><span class="pre">useWallClock()</span></code> puts the wall clock back.</p>
 </section>
 <section id="what-it-leaves-out">
 <h2>What it leaves out<a class="headerlink" href="#what-it-leaves-out" title="Link to this heading">¶</a></h2>
