@@ -6,6 +6,11 @@ the release workflow refuses a tag that doesn't.
 
 ## Unreleased
 
+- `corbelsflightlog-core`: `FlightLog.useClock(nanos)` and `Nt4Server.useClock(nanos)` set the
+  clock a log, or a server started afterwards, reads, so a simulation run faster than real time,
+  or held still, is logged and served in simulated time; `useWallClock()` puts the wall clock
+  back. File names and the server's pings stay on the wall clock.
+
 ## 0.3.1
 
 Documentation only; the library's code is unchanged.

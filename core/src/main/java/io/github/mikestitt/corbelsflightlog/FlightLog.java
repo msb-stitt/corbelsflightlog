@@ -105,11 +105,26 @@ public final class FlightLog {
     /** Test hook: how files are opened. */
     static Opener opener = FileOutputStream::new;
 
-    /** Test hook: the clock, in nanoseconds. */
-    static LongSupplier clock = System::nanoTime;
+    /** The clock, in nanoseconds: the wall clock, or a simulation's, set by {@link #useClock}. */
+    static volatile LongSupplier clock = System::nanoTime;
 
     /** Test hook: wall-clock milliseconds, for file names. */
     static LongSupplier wallClock = System::currentTimeMillis;
+
+    /**
+     * Reads the time from {@code nanos}, in nanoseconds, from now on: a
+     * simulation's clock, so a run faster than real time, or held still, is
+     * logged in simulated time. A log opened before keeps its start time, so set
+     * the clock before opening one. File names stay on the wall clock.
+     */
+    public static void useClock(LongSupplier nanos) {
+        clock = nanos;
+    }
+
+    /** Reads the wall clock again, as on the robot. */
+    public static void useWallClock() {
+        clock = System::nanoTime;
+    }
 
     /** The log most recently opened, for {@link #event}. */
     private static volatile FlightLog current;

@@ -214,6 +214,24 @@ public class Nt4ServerTest {
     }
 
     @Test
+    public void aServerStartedAfterUseClockStampsWithThatClock() throws IOException {
+        long[] nanos = {7_000_000_000L};
+        Nt4Server.useClock(() -> nanos[0]);
+        Nt4Server simulated = Nt4Server.start(0);
+        try {
+            assertEquals(1L, simulated.nowMicros());
+            nanos[0] += 5_000_000L;
+            assertEquals("5 ms of the given clock", 5001L, simulated.nowMicros());
+            assertEquals("held still, it reads the same", 5001L, simulated.nowMicros());
+        } finally {
+            simulated.close();
+            Nt4Server.useWallClock();
+        }
+        long before = server.nowMicros();
+        assertTrue("the wall clock again moves on its own", server.nowMicros() >= before);
+    }
+
+    @Test
     public void timeSyncIsAnsweredOnTheMainSocket() throws IOException {
         long before = server.nowMicros();
         try (RawClient c = RawClient.connect(server.port(), Nt4Server.V41)) {
