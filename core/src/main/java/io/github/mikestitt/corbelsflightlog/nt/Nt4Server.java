@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.LongSupplier;
 
 /**
  * A NetworkTables 4 server, so AdvantageScope can connect to a robot the way
@@ -55,7 +56,10 @@ public final class Nt4Server {
 
     private final ServerSocket listener;
     private final Thread acceptor;
-    private final long startNanos = System.nanoTime();
+    /** The clock, in nanoseconds: the wall clock, or a simulation's, set by {@link #useClock}. */
+    private static volatile LongSupplier clock = System::nanoTime;
+
+    private final long startNanos = clock.getAsLong();
     private volatile boolean closed;
 
     // Everything below is guarded by `this`, and held only for work in memory.
@@ -107,7 +111,22 @@ public final class Nt4Server {
 
     /** The server's clock, in microseconds; every value it sends is stamped with it. */
     public long nowMicros() {
-        return (System.nanoTime() - startNanos) / 1000 + 1;
+        return (clock.getAsLong() - startNanos) / 1000 + 1;
+    }
+
+    /**
+     * Reads the server's clock from {@code nanos}, in nanoseconds, for a server
+     * started from now on: a simulation's clock, so the values a run faster than
+     * real time sends are stamped with simulated time. Pings stay on the wall
+     * clock.
+     */
+    public static void useClock(LongSupplier nanos) {
+        clock = nanos;
+    }
+
+    /** Reads the wall clock again, as on the robot. */
+    public static void useWallClock() {
+        clock = System::nanoTime;
     }
 
     /**

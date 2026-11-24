@@ -247,6 +247,21 @@ public class FlightLogTest {
     // ------------------------------------------------------------ timestamps
 
     @Test
+    public void useClockSetsTheClockALogReadsAndUseWallClockPutsItBack() throws IOException {
+        TestStreams.FakeClock simulated = new TestStreams.FakeClock(9_000_000_000L);
+        FlightLog.useClock(simulated);
+        RecordedLog log = record(l -> {
+            simulated.advanceMillis(3);
+            l.recordOutput("a", 1.0);
+        });
+        assertEquals(Arrays.asList(3_000L), log.timestamps("/a"));
+        FlightLog.useWallClock();
+        long before = System.nanoTime();
+        long now = FlightLog.clock.getAsLong();
+        assertTrue(now >= before && now - before < 1_000_000_000L);
+    }
+
+    @Test
     public void timestampsAreMicrosecondsSinceOpenFromTheClock() throws IOException {
         RecordedLog log = record(l -> {
             clock.advanceMicros(250);
